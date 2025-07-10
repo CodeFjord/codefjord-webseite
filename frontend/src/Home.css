@@ -1,0 +1,396 @@
+.home {
+  width: 100%;
+  background: var(--bg-white);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+.fallback-content {
+  text-align: center;
+  padding: 7rem 2rem 6rem 2rem;
+  background: linear-gradient(120deg, #003049 60%, #274060 100%);
+  color: #fff;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fallback-content h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #fff 60%, #f77f00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fallback-content p {
+  font-size: 1.25rem;
+  margin-bottom: 2.5rem;
+  color: #e0e6ed;
+  font-weight: 500;
+}
+
+/* Section Styles - Konsistent mit App.css */
+.hero-section,
+.services-section,
+.about-section,
+.portfolio-section,
+.contact-section,
+.custom-section {
+  padding: 7rem 0 6rem 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+/* Überschriften und Section-Header */
+.section-title {
+  font-size: 2.7rem;
+  font-weight: 800;
+  color: #1a2a3a;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.01em;
+  position: relative;
+  padding-left: 2.2rem;
+}
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.1em;
+  width: 1.5rem;
+  height: 0.45rem;
+  background: linear-gradient(90deg, #f77f00, #669bbc);
+  border-radius: 2px;
+}
+
+.section-header {
+  text-align: left;
+  margin-bottom: 3.5rem;
+  position: relative;
+}
+
+.section-subtitle {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #7b8794;
+  margin-bottom: 2.5rem;
+  margin-top: 1.5rem;
+  font-weight: 400;
+  line-height: 1.3;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-description {
+  text-align: center;
+  font-size: 1.15rem;
+  color: #23263b;
+  margin-bottom: 3.5rem;
+  font-weight: 400;
+  line-height: 1.7;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero Section */
+.hero-section {
+  width: 100%;
+  min-height: 420px;
+  background: linear-gradient(120deg, #003049 60%, #274060 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 7rem 0 6rem 0;
+}
+.hero-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.hero-content h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #fff 60%, #f77f00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #e0e6ed;
+  font-weight: 500;
+}
+.hero-description {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  color: #e0e6ed;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* Services Section */
+.services-section {
+  background: var(--bg-light);
+  padding: 7rem 0 6rem 0;
+}
+.services-section h2 {
+  composes: section-title;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.2rem;
+  margin-top: 3.5rem;
+}
+.service-card {
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
+  border: 1px solid #e2e8f0;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.service-card:hover {
+  box-shadow: 0 10px 32px 0 rgba(0,0,0,0.10);
+  transform: translateY(-6px) scale(1.02);
+}
+.service-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+.service-card p {
+  color: var(--text-light);
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* About Section */
+.about-section {
+  background: var(--bg-white);
+  padding: 7rem 0 6rem 0;
+}
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+.about-text h2 {
+  composes: section-title;
+}
+.about-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Portfolio Section */
+.portfolio-section {
+  background: var(--bg-light);
+  padding: 7rem 0 6rem 0;
+}
+.portfolio-section h2 {
+  composes: section-title;
+}
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.2rem;
+  margin-top: 3.5rem;
+}
+.portfolio-card {
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
+  border: 1px solid #e2e8f0;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.portfolio-card:hover {
+  box-shadow: 0 10px 32px 0 rgba(0,0,0,0.10);
+  transform: translateY(-6px) scale(1.02);
+}
+.portfolio-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.portfolio-card-content {
+  padding: 2rem;
+}
+.portfolio-card-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+.portfolio-card-content p {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+}
+.portfolio-link {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+.portfolio-link:hover {
+  color: var(--accent-color);
+}
+
+/* Contact Section */
+.contact-section {
+  background: linear-gradient(120deg, #003049 60%, #274060 100%);
+  color: #fff;
+  text-align: center;
+  padding: 7rem 0 6rem 0;
+}
+.contact-section h2 {
+  composes: section-title;
+}
+
+/* CTA Button */
+.cta-button {
+  padding: 0.9rem 2.3rem;
+  border: none;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, #669bbc, #f77f00);
+  color: #fff;
+  box-shadow: 0 4px 16px 0 rgba(0,48,73,0.10);
+  transition: background 0.2s, transform 0.2s;
+  cursor: pointer;
+  display: inline-block;
+}
+.cta-button:hover {
+  background: linear-gradient(90deg, #f77f00, #669bbc);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.section-cta {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+/* Custom Section - Fallback für unbekannte Typen */
+.custom-section {
+  background: var(--bg-white);
+}
+
+.custom-section h2 {
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.custom-section h2::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 1rem;
+  height: 0.4rem;
+  background: linear-gradient(90deg, var(--accent-color), var(--secondary-color));
+  border-radius: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .section-title { font-size: 2.1rem; }
+  .services-grid, .portfolio-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .hero-content h1,
+  .section-title {
+    font-size: 2.5rem;
+  }
+  .section-subtitle {
+    font-size: 1.1rem;
+  }
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .services-grid,
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding: 0 1rem;
+  }
+  .hero-section,
+  .services-section,
+  .about-section,
+  .portfolio-section,
+  .contact-section {
+    padding: 4rem 0 3rem 0;
+  }
+}
+@media (max-width: 480px) {
+  .hero-content h1,
+  .section-title {
+    font-size: 2rem;
+  }
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  .hero-description {
+    font-size: 1rem;
+  }
+  .service-card,
+  .portfolio-card {
+    padding: 1.5rem;
+  }
+  .cta-button {
+    padding: 0.75rem 1.8rem;
+    font-size: 1rem;
+  }
+} 

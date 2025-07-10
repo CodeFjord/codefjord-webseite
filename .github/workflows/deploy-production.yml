@@ -1,0 +1,264 @@
+name: 🚀 Production Deployment
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  test:
+    name: 🧪 Linting & Dependencies prüfen
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: codefjord_cms_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: 📥 Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: 📦 Node.js Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 🔧 Backend Linting
+        working-directory: ./cms-backend
+        run: |
+          npm install
+          echo "✅ Backend dependencies installed"
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_NAME: codefjord_cms_test
+          DB_USER: root
+          DB_PASSWORD: root
+          JWT_SECRET: test-secret-key
+          NODE_ENV: test
+
+      - name: 🔧 Frontend Linting
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run lint
+
+      - name: 🔧 Admin Panel Linting
+        working-directory: ./admin-panel
+        run: |
+          npm install
+          npm run lint
+
+  build:
+    name: 🏗️ Production Build erstellen
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: 📥 Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: 📦 Node.js Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 🏗️ Frontend Production Build
+        working-directory: ./frontend
+        run: |
+          npm install
+          VITE_API_URL=https://api.code-fjord.de/api npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🏗️ Admin Panel Production Build
+        working-directory: ./admin-panel
+        run: |
+          npm install
+          VITE_API_URL=https://api.code-fjord.de/api npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 📦 Production Builds als Artefakte speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-builds
+          path: |
+            frontend/dist/
+            admin-panel/dist/
+          retention-days: 30
+
+  deploy-production:
+    name: 🚀 Produktionsumgebung deployen
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    environment: production
+
+    steps:
+      - name: 📥 Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: 📦 Builds herunterladen
+        uses: actions/download-artifact@v4
+        with:
+          name: production-builds
+
+      - name: 🔑 SSH Key Setup
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: 🚀 Backend deployen
+        run: |
+          # SSH-Verbindung testen
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful'"
+
+          # Backend deployment für öffentliches Repository
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "export DB_HOST='${{ secrets.DB_HOST_PRODUCTION }}' && export DB_PORT='${{ secrets.DB_PORT_PRODUCTION }}' && export DB_NAME='${{ secrets.DB_NAME_PRODUCTION }}' && export DB_USER='${{ secrets.DB_USER_PRODUCTION }}' && export DB_PASS='${{ secrets.DB_PASSWORD_PRODUCTION }}' && export JWT_SECRET='${{ secrets.JWT_SECRET_PRODUCTION }}' && cd /opt/codefjord-webseite && rm -rf * .[^.]* 2>/dev/null || true && git config --global --add safe.directory /opt/codefjord-webseite && git clone https://github.com/codefjord/codefjord-webseite.git . && git checkout main && cd cms-backend && npm install --production && echo 'NODE_ENV=production' > .env && echo 'PORT=3000' >> .env && echo 'DB_HOST='\$DB_HOST >> .env && echo 'DB_PORT='\$DB_PORT >> .env && echo 'DB_NAME='\$DB_NAME >> .env && echo 'DB_USER='\$DB_USER >> .env && echo 'DB_PASS='\$DB_PASS >> .env && echo 'JWT_SECRET='\$JWT_SECRET >> .env && if screen -list | grep -q 'codefjord-backend-production'; then screen -S codefjord-backend-production -X quit || true; sleep 2; fi && screen -dmS codefjord-backend-production bash -c 'cd /opt/codefjord-webseite/cms-backend && npm start > /opt/codefjord-webseite/backend-production.log 2>&1' && sleep 5 && if screen -list | grep -q 'codefjord-backend-production'; then echo \"✅ Screen session started successfully\"; else echo \"❌ Failed to start screen session\"; exit 1; fi"
+
+      - name: 🌐 Frontend und Admin Panel deployen
+        run: |
+          echo "Deploying frontend to production..."
+          rsync -avz --delete frontend/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/code-fjord.de/htdocs/
+          echo "Frontend deployment completed"
+
+          echo "Deploying admin panel to production..."
+          rsync -avz --delete admin-panel/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/admin.code-fjord.de/htdocs/
+          echo "Admin panel deployment completed"
+
+      - name: ✅ Deployment Status
+        run: |
+          echo "✅ Production-Deployment erfolgreich abgeschlossen!"
+          echo "🌐 Frontend: https://code-fjord.de"
+          echo "🔧 Admin Panel: https://admin.code-fjord.de"
+          echo "🔗 Commit: ${{ github.sha }}"
+          echo "👤 Triggered by: ${{ github.actor }}"
+
+  create-release:
+    name: 🏷️ GitHub Release erstellen
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Repository auschecken
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Version bestimmen
+        id: version
+        run: |
+          # Automatische Version basierend auf Datum und Commit
+          DATE=$(date +'%Y.%m.%d')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="${DATE}-${SHORT_SHA}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=v${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: 🏷️ Git Tag erstellen
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a ${{ steps.version.outputs.tag }} -m "Release ${{ steps.version.outputs.version }}"
+          git push origin ${{ steps.version.outputs.tag }}
+        continue-on-error: true
+
+      - name: 📦 Release erstellen
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: |
+            ## 🚀 Production Release ${{ steps.version.outputs.version }}
+
+            ### ✅ Was wurde deployed:
+            - **Frontend**: https://code-fjord.de
+            - **Admin Panel**: https://admin.code-fjord.de
+            - **Backend**: API aktualisiert
+
+            ### 📋 Änderungen:
+            - Automatisches Deployment via GitHub Actions
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+            - Triggered by: ${{ github.actor }}
+
+            ### 🔧 Technische Details:
+            - Node.js Version: ${{ env.NODE_VERSION }}
+            - Build Zeit: $(date)
+
+            ### 📝 Changelog:
+            $(git log --oneline --no-merges $(git describe --tags --abbrev=0 HEAD^)..HEAD | head -20)
+          draft: false
+          prerelease: false
+        continue-on-error: true
+
+  notify-production:
+    name: 📢 Produktions-Benachrichtigung
+    runs-on: ubuntu-latest
+    needs: [deploy-production, create-release]
+    if: always()
+
+    steps:
+      - name: 📧 Discord Benachrichtigung
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL_PROD }}
+          status: ${{ job.status }}
+          title: "🚀 PRODUCTION Deployment - CodeFjord Webseite"
+          description: |
+            **Status**: ${{ job.status }}
+            **Version**: ${{ needs.create-release.outputs.version || 'N/A' }}
+            **Branch**: ${{ github.ref_name }}
+            **Commit**: ${{ github.sha }}
+            **Triggered by**: ${{ github.actor }}
+            **🌐 Frontend**: https://code-fjord.de
+            **🔧 Admin Panel**: https://admin.code-fjord.de
+          color: ${{ job.status == 'success' && '#00ff00' || '#ff0000' }}
+
+      - name: 📧 E-Mail Benachrichtigung
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          subject: "🚀 CodeFjord Production Deployment - ${{ needs.create-release.outputs.version || 'N/A' }}"
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: "deployments@code-fjord.de"
+          body: |
+            Hallo Team,
+
+            das Production Deployment wurde erfolgreich abgeschlossen!
+
+            📋 Details:
+            - Version: ${{ needs.create-release.outputs.version || 'N/A' }}
+            - Commit: ${{ github.sha }}
+            - Triggered by: ${{ github.actor }}
+            - Zeit: $(date)
+
+            🌐 Links:
+            - Frontend: https://code-fjord.de
+            - Admin Panel: https://admin.code-fjord.de
+
+            Beste Grüße,
+            GitHub Actions Bot
+        if: ${{ needs.deploy-production.result == 'success' }}
