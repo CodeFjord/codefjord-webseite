@@ -105,7 +105,6 @@ import Menu from './models/Menu.js';
 import MenuItem from './models/MenuItem.js';
 import TeamMember from './models/TeamMember.js';
 import Notification from './models/Notification.js';
-import { SocketAddress } from 'net';
 
 // Register associations
 const models = {
@@ -134,7 +133,7 @@ Object.values(models).forEach(model => {
     await sequelize.authenticate();
     await sequelize.sync();
     console.log('DB verbunden & synchronisiert.');
-    app.listen(PORT, () => console.log(`Server läuft auf https://${SocketAddress}:${PORT}`));
+    app.listen(PORT, () => console.log(`Server läuft auf https://localhost:${PORT}`));
   } catch (err) {
     console.error('DB-Fehler:', err);
     process.exit(1);
