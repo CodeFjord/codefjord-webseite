@@ -16,7 +16,7 @@ router.get('/download-info', auth, permissions.users.read, async (req, res) => {
       downloadUrl: process.env.APP_DOWNLOAD_URL || 'https://cdn.code-fjord.de/apps/CodeFjordAdmin.ipa',
       qrCodeUrl: process.env.APP_QR_CODE_URL || 'https://cdn.code-fjord.de/apps/qr-code.png',
       manifestUrl: process.env.APP_MANIFEST_URL || 'https://cdn.code-fjord.de/app/manifest.plist',
-      installUrl: `itms-services://?action=download-manifest&url=${encodeURIComponent(process.env.APP_MANIFEST_URL || 'https://your-domain.com/api/app/manifest.plist')}`,
+      installUrl: `itms-services://?action=download-manifest&url=${encodeURIComponent(process.env.APP_MANIFEST_URL || 'https://cdn.code-fjord.de/app/manifest.plist')}`,
       installInstructions: [
         '1. Tippen Sie auf den Download-Link oder scannen Sie den QR-Code',
         '2. Wählen Sie "Installieren" aus',
