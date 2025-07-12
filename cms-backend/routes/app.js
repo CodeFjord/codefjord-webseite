@@ -14,7 +14,9 @@ router.get('/download-info', auth, permissions.users.read, async (req, res) => {
       buildNumber: '1',
       platform: 'iOS',
       downloadUrl: process.env.APP_DOWNLOAD_URL || 'https://cdn.code-fjord.de/apps/CodeFjordAdmin.ipa',
-      qrCodeUrl: process.env.APP_QR_CODE_URL || 'https://your-domain.com/apps/qr-code.png',
+      qrCodeUrl: process.env.APP_QR_CODE_URL || 'https://cdn.code-fjord.de/apps/qr-code.png',
+      manifestUrl: process.env.APP_MANIFEST_URL || 'https://cdn.code-fjord.de/app/manifest.plist',
+      installUrl: `itms-services://?action=download-manifest&url=${encodeURIComponent(process.env.APP_MANIFEST_URL || 'https://your-domain.com/api/app/manifest.plist')}`,
       installInstructions: [
         '1. Tippen Sie auf den Download-Link oder scannen Sie den QR-Code',
         '2. Wählen Sie "Installieren" aus',
@@ -47,6 +49,86 @@ router.get('/download-info', auth, permissions.users.read, async (req, res) => {
   } catch (error) {
     console.error('App download info error:', error);
     res.status(500).json({ error: 'Fehler beim Laden der App-Informationen.' });
+  }
+});
+
+// Manifest.plist für Ad-Hoc-Distribution (öffentlich zugänglich)
+router.get('/manifest.plist', async (req, res) => {
+  try {
+    const manifest = {
+      items: [{
+        assets: [{
+          kind: 'software-package',
+          url: process.env.APP_DOWNLOAD_URL || 'https://your-domain.com/apps/CodeFjordAdmin.ipa'
+        }, {
+          kind: 'display-image',
+          url: process.env.APP_DISPLAY_IMAGE_URL || 'https://your-domain.com/apps/icon-57.png',
+          'needs-shine': false
+        }, {
+          kind: 'full-size-image',
+          url: process.env.APP_FULL_SIZE_IMAGE_URL || 'https://your-domain.com/apps/icon-512.png',
+          'needs-shine': false
+        }],
+        metadata: {
+          'bundle-identifier': process.env.APP_BUNDLE_ID || 'com.codefjord.admin',
+          'bundle-version': process.env.APP_VERSION || '1.0.0',
+          kind: 'software',
+          title: process.env.APP_TITLE || 'CodeFjord Admin'
+        }
+      }]
+    };
+
+    res.setHeader('Content-Type', 'application/xml');
+    res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>assets</key>
+            <array>
+                <dict>
+                    <key>kind</key>
+                    <string>software-package</string>
+                    <key>url</key>
+                    <string>${manifest.items[0].assets[0].url}</string>
+                </dict>
+                <dict>
+                    <key>kind</key>
+                    <string>display-image</string>
+                    <key>url</key>
+                    <string>${manifest.items[0].assets[1].url}</string>
+                    <key>needs-shine</key>
+                    <false/>
+                </dict>
+                <dict>
+                    <key>kind</key>
+                    <string>full-size-image</string>
+                    <key>url</key>
+                    <string>${manifest.items[0].assets[2].url}</string>
+                    <key>needs-shine</key>
+                    <false/>
+                </dict>
+            </array>
+            <key>metadata</key>
+            <dict>
+                <key>bundle-identifier</key>
+                <string>${manifest.items[0].metadata['bundle-identifier']}</string>
+                <key>bundle-version</key>
+                <string>${manifest.items[0].metadata['bundle-version']}</string>
+                <key>kind</key>
+                <string>software</string>
+                <key>title</key>
+                <string>${manifest.items[0].metadata.title}</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>`);
+  } catch (error) {
+    console.error('Manifest generation error:', error);
+    res.status(500).json({ error: 'Fehler beim Generieren des Manifests.' });
   }
 });
 

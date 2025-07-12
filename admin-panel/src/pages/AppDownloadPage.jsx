@@ -62,25 +62,32 @@ const AppDownloadPage = () => {
   };
 
   const handleDownload = () => {
-    if (appInfo?.downloadUrl) {
-      window.open(appInfo.downloadUrl, '_blank');
+    if (appInfo?.installUrl) {
+      // Für iOS-Geräte: Öffne itms-services URL
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        window.location.href = appInfo.installUrl;
+      } else {
+        // Für andere Geräte: Zeige Download-Link an
+        window.open(appInfo.downloadUrl, '_blank');
+      }
     }
   };
 
   const handleShare = async () => {
-    if (navigator.share && appInfo?.downloadUrl) {
+    const shareUrl = appInfo?.installUrl || appInfo?.downloadUrl;
+    if (navigator.share && shareUrl) {
       try {
         await navigator.share({
           title: appInfo.name,
           text: `Laden Sie ${appInfo.name} herunter`,
-          url: appInfo.downloadUrl
+          url: shareUrl
         });
       } catch (err) {
         console.log('Share cancelled');
       }
     } else {
       // Fallback: URL kopieren
-      navigator.clipboard.writeText(appInfo.downloadUrl);
+      navigator.clipboard.writeText(shareUrl);
     }
   };
 
