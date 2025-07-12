@@ -36,12 +36,6 @@ SECRETS.md
 cms-backend/migrate+create/*.*
 
 # iOS
-ios
-ios-adhoc-troubleshooting.md
-NGINX_ADHOC_REQUIREMENTS.md
-nginx-adhoc-config.conf
-nginx-adhoc-simple.conf
-setup-nginx-adhoc.sh
-static-manifest.plist
-test-download.html
-test-nginx-adhoc.sh
+ios/CodeFjordAdmin/generate-app-icons-both-modes.sh
+ios/CodeFjordAdmin/generate-qr-code.sh
+ios/CodeFjordAdmin/generate-app-icons.sh

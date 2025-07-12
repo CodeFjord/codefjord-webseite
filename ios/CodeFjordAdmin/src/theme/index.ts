@@ -1,0 +1,271 @@
+import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+
+// Custom Color Palette
+const colors = {
+  primary: {
+    50: '#f0f9ff',
+    100: '#e0f2fe',
+    200: '#bae6fd',
+    300: '#7dd3fc',
+    400: '#38bdf8',
+    500: '#0ea5e9',
+    600: '#0284c7',
+    700: '#0369a1',
+    800: '#075985',
+    900: '#0c4a6e',
+  },
+  secondary: {
+    50: '#f8fafc',
+    100: '#f1f5f9',
+    200: '#e2e8f0',
+    300: '#cbd5e1',
+    400: '#94a3b8',
+    500: '#64748b',
+    600: '#475569',
+    700: '#334155',
+    800: '#1e293b',
+    900: '#0f172a',
+  },
+  success: {
+    50: '#f0fdf4',
+    100: '#dcfce7',
+    200: '#bbf7d0',
+    300: '#86efac',
+    400: '#4ade80',
+    500: '#22c55e',
+    600: '#16a34a',
+    700: '#15803d',
+    800: '#166534',
+    900: '#14532d',
+  },
+  warning: {
+    50: '#fffbeb',
+    100: '#fef3c7',
+    200: '#fde68a',
+    300: '#fcd34d',
+    400: '#fbbf24',
+    500: '#f59e0b',
+    600: '#d97706',
+    700: '#b45309',
+    800: '#92400e',
+    900: '#78350f',
+  },
+  error: {
+    50: '#fef2f2',
+    100: '#fee2e2',
+    200: '#fecaca',
+    300: '#fca5a5',
+    400: '#f87171',
+    500: '#ef4444',
+    600: '#dc2626',
+    700: '#b91c1c',
+    800: '#991b1b',
+    900: '#7f1d1d',
+  },
+  neutral: {
+    50: '#fafafa',
+    100: '#f5f5f5',
+    200: '#e5e5e5',
+    300: '#d4d4d4',
+    400: '#a3a3a3',
+    500: '#737373',
+    600: '#525252',
+    700: '#404040',
+    800: '#262626',
+    900: '#171717',
+  },
+};
+
+// Light Theme
+export const lightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#2563eb',
+    primaryContainer: '#dbeafe',
+    secondary: '#64748b',
+    secondaryContainer: '#f1f5f9',
+    tertiary: '#7c3aed',
+    tertiaryContainer: '#ede9fe',
+    surface: '#ffffff',
+    surfaceVariant: '#f8fafc',
+    background: '#f8fafc',
+    error: '#dc2626',
+    errorContainer: '#fef2f2',
+    onPrimary: '#ffffff',
+    onPrimaryContainer: '#1e40af',
+    onSecondary: '#ffffff',
+    onSecondaryContainer: '#475569',
+    onTertiary: '#ffffff',
+    onTertiaryContainer: '#5b21b6',
+    onSurface: '#0f172a',
+    onSurfaceVariant: '#475569',
+    onBackground: '#0f172a',
+    onError: '#ffffff',
+    onErrorContainer: '#991b1b',
+    outline: '#e2e8f0',
+    outlineVariant: '#cbd5e1',
+    shadow: '#000000',
+    scrim: '#000000',
+    inverseSurface: '#0f172a',
+    inverseOnSurface: '#f8fafc',
+    inversePrimary: '#dbeafe',
+    elevation: {
+      level0: 'transparent',
+      level1: '#ffffff',
+      level2: '#ffffff',
+      level3: '#ffffff',
+      level4: '#ffffff',
+      level5: '#ffffff',
+    },
+  },
+  roundness: 8,
+};
+
+// Dark Theme
+export const darkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    primary: '#3b82f6',
+    primaryContainer: '#1e3a8a',
+    secondary: '#94a3b8',
+    secondaryContainer: '#334155',
+    tertiary: '#a855f7',
+    tertiaryContainer: '#581c87',
+    surface: '#1e293b',
+    surfaceVariant: '#334155',
+    background: '#0f172a',
+    error: '#f87171',
+    errorContainer: '#7f1d1d',
+    onPrimary: '#ffffff',
+    onPrimaryContainer: '#dbeafe',
+    onSecondary: '#ffffff',
+    onSecondaryContainer: '#e2e8f0',
+    onTertiary: '#ffffff',
+    onTertiaryContainer: '#ede9fe',
+    onSurface: '#f8fafc',
+    onSurfaceVariant: '#cbd5e1',
+    onBackground: '#f8fafc',
+    onError: '#ffffff',
+    onErrorContainer: '#fecaca',
+    outline: '#475569',
+    outlineVariant: '#64748b',
+    shadow: '#000000',
+    scrim: '#000000',
+    inverseSurface: '#f8fafc',
+    inverseOnSurface: '#0f172a',
+    inversePrimary: '#1e3a8a',
+    elevation: {
+      level0: 'transparent',
+      level1: '#1e293b',
+      level2: '#334155',
+      level3: '#475569',
+      level4: '#64748b',
+      level5: '#94a3b8',
+    },
+  },
+  roundness: 8,
+};
+
+// Spacing System
+export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+};
+
+// Typography
+export const typography = {
+  h1: {
+    fontSize: 32,
+    fontWeight: '700',
+    lineHeight: 40,
+  },
+  h2: {
+    fontSize: 28,
+    fontWeight: '600',
+    lineHeight: 36,
+  },
+  h3: {
+    fontSize: 24,
+    fontWeight: '600',
+    lineHeight: 32,
+  },
+  h4: {
+    fontSize: 20,
+    fontWeight: '500',
+    lineHeight: 28,
+  },
+  body1: {
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 24,
+  },
+  body2: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 20,
+  },
+  caption: {
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 16,
+  },
+};
+
+// Shadows
+export const shadows = {
+  sm: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  md: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  lg: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  xl: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+};
+
+export default {
+  lightTheme,
+  darkTheme,
+  spacing,
+  typography,
+  shadows,
+  colors,
+}; 
