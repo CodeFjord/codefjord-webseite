@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import CookieBanner from './components/CookieBanner';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import Portfolio from './pages/Portfolio';
@@ -18,9 +19,11 @@ import ComingSoon from './pages/ComingSoon';
 import Maintenance from './pages/Maintenance';
 import ConstructionFrame from './components/ConstructionFrame';
 import './App.css';
+import './styles/theme.css';
 import logo from './assets/images/codefjord-white.png';
 import { websiteSettingsApi } from './api/cms.js';
 import useAuth from './store/auth.js';
+import useThemeStore from './store/themeStore.js';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +32,7 @@ function App() {
     maintenance_enabled: 'false'
   });
   const { isAdmin, init: initAuth, setupStorageListener, setAdminStatus } = useAuth();
+  const { initTheme } = useThemeStore();
 
   useEffect(() => {
     // Initialisiere Auth-Status und Website-Einstellungen
@@ -40,6 +44,9 @@ function App() {
       
       // Initialisiere Auth-Status
       await initAuth();
+      
+      // Initialisiere Theme-System
+      const cleanupTheme = initTheme();
       
       // Lade Website-Einstellungen
       try {
@@ -53,10 +60,20 @@ function App() {
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
+      
+      // Cleanup-Funktion zurückgeben
+      return cleanupTheme;
     };
 
-    initializeApp();
-  }, [initAuth, setupStorageListener]);
+    const cleanup = initializeApp();
+    
+    // Cleanup beim Unmount
+    return () => {
+      if (cleanup && typeof cleanup.then === 'function') {
+        cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+      }
+    };
+  }, [initAuth, setupStorageListener, initTheme]);
 
   if (isLoading) {
     return (
@@ -125,6 +142,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <CookieBanner />
         </div>
       </ConstructionFrame>
     </Router>

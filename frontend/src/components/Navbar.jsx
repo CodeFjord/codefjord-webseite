@@ -2,14 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Menu, X, Shield, LogOut } from 'lucide-react';
 import logo from '../assets/images/logo.png';
+import logoWhite from '../assets/images/logo-white.png';
 import { menuApi } from '../api/cms';
 import useAuth from '../store/auth.js';
+import useThemeStore from '../store/themeStore.js';
+import ThemeToggle from './ThemeToggle.jsx';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
   const menuRef = useRef(null);
   const { isAdmin, logout } = useAuth();
+  const { effectiveTheme } = useThemeStore();
+  
+  // Wähle das passende Logo basierend auf dem Theme
+  const currentLogo = effectiveTheme === 'dark' ? logoWhite : logo;
 
   // Lade Navbar-Menü aus dem CMS
   useEffect(() => {
@@ -95,8 +102,8 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="logo" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src={logo} alt="CodeFjord Logo" style={{ height: '52px', width: 'auto', display: 'block' }} />
-          <span style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary-color)', letterSpacing: '0.5px' }}>CodeFjord</span>
+          <img src={currentLogo} alt="CodeFjord Logo" style={{ height: '52px', width: 'auto', display: 'block' }} />
+          <span style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--color-text-primary)', letterSpacing: '0.5px' }}>CodeFjord</span>
         </Link>
         <ul className={`nav-links ${isMenuOpen ? 'nav-links-open' : ''}`}> {/* Desktop */}
           {navItems.map((item) => (
@@ -122,6 +129,9 @@ const Navbar = () => {
               )}
             </li>
           ))}
+          <li className="theme-toggle-item">
+            <ThemeToggle compact={true} />
+          </li>
           {isAdmin && (
             <>
               <li className="admin-indicator">
@@ -181,8 +191,8 @@ const Navbar = () => {
           <aside className="mobile-menu slide-in" ref={menuRef} tabIndex={-1} onClick={e => e.stopPropagation()}>
             <div className="mobile-menu-header">
               <div className="mobile-menu-branding">
-                <img src={logo} alt="CodeFjord Logo" style={{ height: '40px', width: 'auto' }} />
-                <span style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--primary-color)', marginLeft: '0.5rem' }}>CodeFjord</span>
+                <img src={currentLogo} alt="CodeFjord Logo" style={{ height: '40px', width: 'auto' }} />
+                <span style={{ fontWeight: 700, fontSize: '1.2rem', color: 'var(--color-text-primary)', marginLeft: '0.5rem' }}>CodeFjord</span>
               </div>
               <button className="mobile-menu-close" onClick={closeMenu} aria-label="Menü schließen">
                 <X size={28} />
@@ -212,6 +222,9 @@ const Navbar = () => {
                   )}
                 </li>
               ))}
+              <li className="theme-toggle-item-mobile">
+                <ThemeToggle compact={true} />
+              </li>
               {isAdmin && (
                 <>
                   <li className="admin-indicator-mobile">
