@@ -13,6 +13,7 @@ import MenusPage from './pages/MenusPage';
 import MediaPage from './pages/MediaPage';
 import ContactPage from './pages/ContactPage';
 import UsersPage from './pages/UsersPage';
+import AppDownloadPage from './pages/AppDownloadPage';
 import './App.css'
 import { useEffect } from 'react';
 import { useAuthStore } from './store/auth';
@@ -98,6 +99,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app-download"
+            element={
+              <ProtectedRoute>
+                <AppDownloadPage />
               </ProtectedRoute>
             }
           />

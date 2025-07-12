@@ -66,7 +66,8 @@ import {
   CheckCircle,
   Warning,
   Info,
-  Error
+  Error,
+  GetApp
 } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../store/auth';
@@ -148,6 +149,14 @@ const navItems = [
     path: '/users',
     description: 'Benutzerverwaltung',
     color: 'warning',
+    roles: ['admin']
+  },
+  { 
+    label: 'App Download', 
+    icon: <GetApp />, 
+    path: '/app-download',
+    description: 'iOS App herunterladen',
+    color: 'info',
     roles: ['admin']
   },
 ];

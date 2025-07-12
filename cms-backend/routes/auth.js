@@ -5,6 +5,8 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import auth from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/permissions.js';
+import crypto from 'crypto';
+import { sendEmail, createPasswordResetEmail } from '../utils/mailer.js';
 
 const router = express.Router();
 
@@ -229,5 +231,111 @@ router.put('/profile', auth, async (req, res) => {
     res.status(500).json({ error: 'Server-Fehler' });
   }
 });
+
+// Request password reset
+router.post('/forgot-password',
+  body('email').isEmail(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+      
+      const { email } = req.body;
+      const user = await User.findOne({ where: { email } });
+      
+      if (!user) {
+        // Don't reveal if user exists or not for security
+        return res.json({ message: 'Wenn die E-Mail-Adresse existiert, wurde eine E-Mail mit Anweisungen gesendet.' });
+      }
+
+      // Generate reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      
+      await user.update({
+        resetToken,
+        resetTokenExpiry
+      });
+
+      // Send reset email
+      const resetEmail = createPasswordResetEmail(user, resetToken);
+      const emailResult = await sendEmail(resetEmail);
+
+      if (emailResult.success) {
+        res.json({ message: 'Wenn die E-Mail-Adresse existiert, wurde eine E-Mail mit Anweisungen gesendet.' });
+      } else {
+        console.error('Password reset email error:', emailResult.error);
+        res.status(500).json({ error: 'E-Mail konnte nicht gesendet werden.' });
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      res.status(500).json({ error: 'Server-Fehler' });
+    }
+  }
+);
+
+// Verify reset token
+router.post('/verify-reset-token',
+  body('token').exists(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+      
+      const { token } = req.body;
+      const user = await User.findOne({
+        where: {
+          resetToken: token,
+          resetTokenExpiry: { [require('sequelize').Op.gt]: new Date() }
+        }
+      });
+
+      if (!user) {
+        return res.status(400).json({ error: 'Ungültiger oder abgelaufener Reset-Token.' });
+      }
+
+      res.json({ message: 'Token ist gültig.' });
+    } catch (error) {
+      console.error('Verify reset token error:', error);
+      res.status(500).json({ error: 'Server-Fehler' });
+    }
+  }
+);
+
+// Reset password
+router.post('/reset-password',
+  body('token').exists(),
+  body('password').isLength({ min: 6 }),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+      
+      const { token, password } = req.body;
+      const user = await User.findOne({
+        where: {
+          resetToken: token,
+          resetTokenExpiry: { [require('sequelize').Op.gt]: new Date() }
+        }
+      });
+
+      if (!user) {
+        return res.status(400).json({ error: 'Ungültiger oder abgelaufener Reset-Token.' });
+      }
+
+      // Update password and clear reset token
+      await user.update({
+        password,
+        resetToken: null,
+        resetTokenExpiry: null
+      });
+
+      res.json({ message: 'Passwort wurde erfolgreich zurückgesetzt.' });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      res.status(500).json({ error: 'Server-Fehler' });
+    }
+  }
+);
 
 export default router; 

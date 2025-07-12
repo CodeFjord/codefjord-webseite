@@ -90,6 +90,43 @@ export const createReplyEmail = (contactMessage, adminReply) => ({
   `
 });
 
+// E-Mail-Template für Passwort-Reset
+export const createPasswordResetEmail = (user, resetToken) => {
+  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+  
+  return {
+    from: `"CodeFjord Admin" <${process.env.SMTP_USER}>`,
+    to: user.email,
+    subject: 'Passwort zurücksetzen - CodeFjord Admin',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">Passwort zurücksetzen</h2>
+        <p>Hallo ${user.name},</p>
+        <p>Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts für das CodeFjord Admin-Panel gestellt.</p>
+        
+        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p><strong>Klicken Sie auf den folgenden Link, um Ihr Passwort zurückzusetzen:</strong></p>
+          <a href="${resetUrl}" style="display: inline-block; background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0;">
+            Passwort zurücksetzen
+          </a>
+          <p style="margin-top: 15px; font-size: 14px; color: #666;">
+            Oder kopieren Sie diesen Link in Ihren Browser:<br>
+            <a href="${resetUrl}" style="color: #007bff;">${resetUrl}</a>
+          </p>
+        </div>
+        
+        <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+          <p style="margin: 0; font-size: 14px;">
+            <strong>Wichtig:</strong> Dieser Link ist nur 1 Stunde gültig. Wenn Sie diese E-Mail nicht angefordert haben, können Sie sie ignorieren.
+          </p>
+        </div>
+        
+        <p>Mit freundlichen Grüßen,<br>Ihr CodeFjord Team</p>
+      </div>
+    `
+  };
+};
+
 // E-Mail senden
 export const sendEmail = async (emailOptions) => {
   try {
