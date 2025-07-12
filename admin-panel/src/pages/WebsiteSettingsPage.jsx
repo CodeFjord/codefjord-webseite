@@ -25,7 +25,16 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  InputAdornment
+  InputAdornment,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListItemSecondaryAction
 } from '@mui/material';
 import {
   Settings,
@@ -35,7 +44,16 @@ import {
   Info,
   Warning,
   CheckCircle,
-  Error
+  Error,
+  ExpandMore,
+  Public,
+  Edit,
+  Save,
+  Visibility,
+  VisibilityOff,
+  AccessTime,
+  Message,
+  Title
 } from '@mui/icons-material';
 
 const WebsiteSettingsPage = () => {
@@ -44,6 +62,7 @@ const WebsiteSettingsPage = () => {
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState({});
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [expanded, setExpanded] = useState('coming-soon');
   const notifications = useNotifications();
 
   useEffect(() => {
@@ -154,7 +173,9 @@ const WebsiteSettingsPage = () => {
     }
   };
 
-
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
   if (loading) {
     return (
@@ -171,207 +192,459 @@ const WebsiteSettingsPage = () => {
 
   return (
     <AdminLayout>
-      <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
+      <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
         {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
-            <Settings sx={{ mr: 2, verticalAlign: 'middle' }} />
+        <Box sx={{ mb: 4, textAlign: 'center' }}>
+          <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 2, bgcolor: 'primary.main' }}>
+            <Settings sx={{ fontSize: 40 }} />
+          </Avatar>
+          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
             Website-Einstellungen
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Verwalten Sie die Website-Modi und Einstellungen für Coming Soon und Wartungsmodus
+          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+            Verwalten Sie die Website-Modi und konfigurieren Sie Coming Soon und Wartungsmodus
           </Typography>
         </Box>
 
-        {/* Status Overview */}
+        {/* Status Overview Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={6}>
-            <Paper elevation={2} sx={{ p: 3, border: isComingSoonActive ? 2 : 1, borderColor: isComingSoonActive ? 'primary.main' : 'divider' }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                <Box display="flex" alignItems="center">
-                  <Schedule color={isComingSoonActive ? 'primary' : 'disabled'} sx={{ mr: 2 }} />
-                  <Typography variant="h6" fontWeight={600}>
-                    Coming Soon Mode
-                  </Typography>
+          <Grid item xs={12} lg={6}>
+            <Card 
+              elevation={isComingSoonActive ? 8 : 2} 
+              sx={{ 
+                height: '100%',
+                background: isComingSoonActive ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'background.paper',
+                color: isComingSoonActive ? 'white' : 'text.primary',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: isComingSoonActive ? 12 : 4
+                }
+              }}
+            >
+              <CardContent sx={{ p: 4 }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Box display="flex" alignItems="center">
+                    <Avatar sx={{ 
+                      bgcolor: isComingSoonActive ? 'rgba(255,255,255,0.2)' : 'primary.main',
+                      mr: 2 
+                    }}>
+                      <Schedule />
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h5" fontWeight={700}>
+                        Coming Soon Mode
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                        Countdown bis zur Veröffentlichung
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Chip 
+                    label={isComingSoonActive ? 'AKTIV' : 'INAKTIV'} 
+                    color={isComingSoonActive ? 'default' : 'default'}
+                    variant={isComingSoonActive ? 'filled' : 'outlined'}
+                    sx={{ 
+                      fontWeight: 600,
+                      bgcolor: isComingSoonActive ? 'rgba(255,255,255,0.2)' : 'transparent'
+                    }}
+                  />
                 </Box>
-                <Chip 
-                  label={isComingSoonActive ? 'Aktiv' : 'Inaktiv'} 
-                  color={isComingSoonActive ? 'primary' : 'default'}
-                  variant={isComingSoonActive ? 'filled' : 'outlined'}
-                />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Zeigt eine Countdown-Seite an, bis die Website vollständig verfügbar ist
-              </Typography>
-                              <FormControlLabel
+                
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.9 }}>
+                  Zeigt eine elegante Countdown-Seite an, bis Ihre Website vollständig verfügbar ist
+                </Typography>
+
+                <FormControlLabel
                   control={
                     <Switch
                       checked={isComingSoonActive}
                       onChange={async () => await handleToggle('coming_soon_enabled', 'Coming Soon Mode aktivieren/deaktivieren')}
-                      color="primary"
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: isComingSoonActive ? 'white' : 'primary.main',
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: isComingSoonActive ? 'rgba(255,255,255,0.3)' : 'primary.main',
+                        },
+                      }}
                     />
                   }
-                  label="Coming Soon Mode aktivieren"
+                  label={
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Coming Soon Mode aktivieren
+                    </Typography>
+                  }
                 />
-            </Paper>
+              </CardContent>
+            </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Paper elevation={2} sx={{ p: 3, border: isMaintenanceActive ? 2 : 1, borderColor: isMaintenanceActive ? 'warning.main' : 'divider' }}>
-              <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                <Box display="flex" alignItems="center">
-                  <Build color={isMaintenanceActive ? 'warning' : 'disabled'} sx={{ mr: 2 }} />
-                  <Typography variant="h6" fontWeight={600}>
-                    Wartungsmodus
-                  </Typography>
+          <Grid item xs={12} lg={6}>
+            <Card 
+              elevation={isMaintenanceActive ? 8 : 2} 
+              sx={{ 
+                height: '100%',
+                background: isMaintenanceActive ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' : 'background.paper',
+                color: isMaintenanceActive ? 'white' : 'text.primary',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: isMaintenanceActive ? 12 : 4
+                }
+              }}
+            >
+              <CardContent sx={{ p: 4 }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Box display="flex" alignItems="center">
+                    <Avatar sx={{ 
+                      bgcolor: isMaintenanceActive ? 'rgba(255,255,255,0.2)' : 'warning.main',
+                      mr: 2 
+                    }}>
+                      <Build />
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h5" fontWeight={700}>
+                        Wartungsmodus
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                        Technische Wartungsarbeiten
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Chip 
+                    label={isMaintenanceActive ? 'AKTIV' : 'INAKTIV'} 
+                    color={isMaintenanceActive ? 'default' : 'default'}
+                    variant={isMaintenanceActive ? 'filled' : 'outlined'}
+                    sx={{ 
+                      fontWeight: 600,
+                      bgcolor: isMaintenanceActive ? 'rgba(255,255,255,0.2)' : 'transparent'
+                    }}
+                  />
                 </Box>
-                <Chip 
-                  label={isMaintenanceActive ? 'Aktiv' : 'Inaktiv'} 
-                  color={isMaintenanceActive ? 'warning' : 'default'}
-                  variant={isMaintenanceActive ? 'filled' : 'outlined'}
-                />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Zeigt eine Wartungsseite an, während technische Arbeiten durchgeführt werden
-              </Typography>
-                              <FormControlLabel
+                
+                <Typography variant="body1" sx={{ mb: 3, opacity: 0.9 }}>
+                  Zeigt eine professionelle Wartungsseite während technischer Arbeiten
+                </Typography>
+
+                <FormControlLabel
                   control={
                     <Switch
                       checked={isMaintenanceActive}
                       onChange={async () => await handleToggle('maintenance_enabled', 'Wartungsmodus aktivieren/deaktivieren')}
-                      color="warning"
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: isMaintenanceActive ? 'white' : 'warning.main',
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: isMaintenanceActive ? 'rgba(255,255,255,0.3)' : 'warning.main',
+                        },
+                      }}
                     />
                   }
-                  label="Wartungsmodus aktivieren"
+                  label={
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Wartungsmodus aktivieren
+                    </Typography>
+                  }
                 />
-            </Paper>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
 
-        {/* Coming Soon Settings */}
-        {isComingSoonActive && (
-          <Card elevation={3} sx={{ mb: 4 }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" mb={3}>
-                <Schedule color="primary" sx={{ mr: 2 }} />
-                <Typography variant="h5" fontWeight={600}>
-                  Coming Soon Einstellungen
-                </Typography>
-              </Box>
-
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Countdown-Datum"
-                    type="datetime-local"
-                    value={settings.coming_soon_date?.value ? new Date(settings.coming_soon_date.value).toISOString().slice(0, 16) : ''}
-                    onChange={async (e) => await handleDateChange('coming_soon_date', e.target.value, 'Datum für Coming Soon Countdown (ISO String)')}
-                    InputLabelProps={{ shrink: true }}
-                    helperText="Wählen Sie das Datum, bis wann der Countdown laufen soll"
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Titel"
-                    value={settings.coming_soon_title?.value || ''}
-                    onChange={async (e) => await handleTextChange('coming_soon_title', e.target.value, 'Titel für Coming Soon Seite')}
-                    placeholder="Wir kommen bald!"
-                    helperText="Der Haupttitel der Coming Soon Seite"
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nachricht"
-                    multiline
-                    rows={3}
-                    value={settings.coming_soon_message?.value || ''}
-                    onChange={async (e) => await handleTextChange('coming_soon_message', e.target.value, 'Nachricht für Coming Soon Seite')}
-                    placeholder="Wir arbeiten hart daran, unsere neue Website zu erstellen. Bald sind wir online!"
-                    helperText="Die Hauptnachricht, die Besuchern angezeigt wird"
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Maintenance Settings */}
-        {isMaintenanceActive && (
-          <Card elevation={3} sx={{ mb: 4 }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" mb={3}>
-                <Build color="warning" sx={{ mr: 2 }} />
-                <Typography variant="h5" fontWeight={600}>
-                  Wartungsmodus Einstellungen
-                </Typography>
-              </Box>
-
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Titel"
-                    value={settings.maintenance_title?.value || ''}
-                    onChange={async (e) => await handleTextChange('maintenance_title', e.target.value, 'Titel für Wartungsmodus Seite')}
-                    placeholder="Wartungsmodus"
-                    helperText="Der Haupttitel der Wartungsseite"
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Nachricht"
-                    multiline
-                    rows={3}
-                    value={settings.maintenance_message?.value || ''}
-                    onChange={async (e) => await handleTextChange('maintenance_message', e.target.value, 'Nachricht für Wartungsmodus')}
-                    placeholder="Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut."
-                    helperText="Die Hauptnachricht, die Besuchern angezeigt wird"
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Priority Warning */}
         {(isComingSoonActive || isMaintenanceActive) && (
-          <Alert severity="info" sx={{ mb: 3 }}>
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              '& .MuiAlert-icon': { fontSize: 28 }
+            }}
+            icon={<Info sx={{ fontSize: 28 }} />}
+          >
+            <Typography variant="body1" fontWeight={600} gutterBottom>
+              Wichtiger Hinweis zur Priorität
+            </Typography>
             <Typography variant="body2">
-              <strong>Prioritätsreihenfolge:</strong> Wartungsmodus hat Vorrang vor Coming Soon Mode. 
-              Wenn beide aktiviert sind, wird der Wartungsmodus angezeigt.
+              <strong>Wartungsmodus hat Vorrang:</strong> Wenn beide Modi aktiviert sind, wird der Wartungsmodus angezeigt. 
+              Der Coming Soon Mode wird nur angezeigt, wenn der Wartungsmodus deaktiviert ist.
             </Typography>
           </Alert>
         )}
+
+        {/* Configuration Sections */}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {/* Coming Soon Configuration */}
+          <Grid item xs={12} md={6}>
+            <Accordion 
+              expanded={expanded === 'coming-soon'} 
+              onChange={handleAccordionChange('coming-soon')}
+              sx={{ 
+                height: '100%',
+                '&:before': { display: 'none' },
+                borderRadius: 2,
+                overflow: 'hidden'
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ 
+                  bgcolor: isComingSoonActive ? 'primary.light' : 'grey.50',
+                  '&:hover': { bgcolor: isComingSoonActive ? 'primary.main' : 'grey.100' }
+                }}
+              >
+                <Box display="flex" alignItems="center">
+                  <Schedule color={isComingSoonActive ? 'white' : 'primary'} sx={{ mr: 2 }} />
+                  <Typography variant="h6" fontWeight={600} color={isComingSoonActive ? 'white' : 'text.primary'}>
+                    Coming Soon Konfiguration
+                  </Typography>
+                  {isComingSoonActive && (
+                    <Chip 
+                      label="AKTIV" 
+                      size="small" 
+                      sx={{ ml: 2, bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} 
+                    />
+                  )}
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 4 }}>
+                {isComingSoonActive ? (
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Countdown-Datum"
+                        type="datetime-local"
+                        value={settings.coming_soon_date?.value ? new Date(settings.coming_soon_date.value).toISOString().slice(0, 16) : ''}
+                        onChange={async (e) => await handleDateChange('coming_soon_date', e.target.value, 'Datum für Coming Soon Countdown (ISO String)')}
+                        InputLabelProps={{ shrink: true }}
+                        helperText="Wählen Sie das Datum, bis wann der Countdown laufen soll"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccessTime color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Titel"
+                        value={settings.coming_soon_title?.value || ''}
+                        onChange={async (e) => await handleTextChange('coming_soon_title', e.target.value, 'Titel für Coming Soon Seite')}
+                        placeholder="Wir kommen bald!"
+                        helperText="Der Haupttitel der Coming Soon Seite"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Title color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nachricht"
+                        multiline
+                        rows={4}
+                        value={settings.coming_soon_message?.value || ''}
+                        onChange={async (e) => await handleTextChange('coming_soon_message', e.target.value, 'Nachricht für Coming Soon Seite')}
+                        placeholder="Wir arbeiten hart daran, unsere neue Website zu erstellen. Bald sind wir online!"
+                        helperText="Die Hauptnachricht, die Besuchern angezeigt wird"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Message color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                ) : (
+                  <Box textAlign="center" py={4}>
+                    <Schedule sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
+                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                      Coming Soon Mode ist deaktiviert
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Aktivieren Sie den Coming Soon Mode oben, um die Konfiguration zu bearbeiten
+                    </Typography>
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+
+          {/* Maintenance Configuration */}
+          <Grid item xs={12} md={6}>
+            <Accordion 
+              expanded={expanded === 'maintenance'} 
+              onChange={handleAccordionChange('maintenance')}
+              sx={{ 
+                height: '100%',
+                '&:before': { display: 'none' },
+                borderRadius: 2,
+                overflow: 'hidden'
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ 
+                  bgcolor: isMaintenanceActive ? 'warning.light' : 'grey.50',
+                  '&:hover': { bgcolor: isMaintenanceActive ? 'warning.main' : 'grey.100' }
+                }}
+              >
+                <Box display="flex" alignItems="center">
+                  <Build color={isMaintenanceActive ? 'white' : 'warning'} sx={{ mr: 2 }} />
+                  <Typography variant="h6" fontWeight={600} color={isMaintenanceActive ? 'white' : 'text.primary'}>
+                    Wartungsmodus Konfiguration
+                  </Typography>
+                  {isMaintenanceActive && (
+                    <Chip 
+                      label="AKTIV" 
+                      size="small" 
+                      sx={{ ml: 2, bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} 
+                    />
+                  )}
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails sx={{ p: 4 }}>
+                {isMaintenanceActive ? (
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Titel"
+                        value={settings.maintenance_title?.value || ''}
+                        onChange={async (e) => await handleTextChange('maintenance_title', e.target.value, 'Titel für Wartungsmodus Seite')}
+                        placeholder="Wartungsmodus"
+                        helperText="Der Haupttitel der Wartungsseite"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Title color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nachricht"
+                        multiline
+                        rows={4}
+                        value={settings.maintenance_message?.value || ''}
+                        onChange={async (e) => await handleTextChange('maintenance_message', e.target.value, 'Nachricht für Wartungsmodus')}
+                        placeholder="Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut."
+                        helperText="Die Hauptnachricht, die Besuchern angezeigt wird"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Message color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                ) : (
+                  <Box textAlign="center" py={4}>
+                    <Build sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
+                    <Typography variant="h6" color="text.secondary" gutterBottom>
+                      Wartungsmodus ist deaktiviert
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Aktivieren Sie den Wartungsmodus oben, um die Konfiguration zu bearbeiten
+                    </Typography>
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+        </Grid>
+
+        {/* Quick Actions */}
+        <Card elevation={2} sx={{ mb: 4, borderRadius: 2 }}>
+          <CardContent sx={{ p: 3 }}>
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Schnellaktionen
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Refresh />}
+                  onClick={loadSettings}
+                  disabled={saving}
+                  fullWidth
+                  sx={{ py: 1.5 }}
+                >
+                  Neu laden
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Public />}
+                  onClick={() => window.open('/', '_blank')}
+                  fullWidth
+                  sx={{ py: 1.5 }}
+                >
+                  Frontend ansehen
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Visibility />}
+                  onClick={() => window.open('/?admin_token=true', '_blank')}
+                  fullWidth
+                  sx={{ py: 1.5 }}
+                >
+                  Admin-Vorschau
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Button
+                  variant="contained"
+                  startIcon={<Save />}
+                  onClick={loadSettings}
+                  disabled={saving}
+                  fullWidth
+                  sx={{ py: 1.5 }}
+                >
+                  Alle speichern
+                </Button>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
         {/* Message Display */}
         {message.text && (
           <Alert 
             severity={message.type} 
-            sx={{ mb: 3 }}
+            sx={{ 
+              mb: 3,
+              borderRadius: 2,
+              '& .MuiAlert-icon': { fontSize: 28 }
+            }}
             onClose={() => setMessage({ text: '', type: '' })}
           >
             {message.text}
           </Alert>
         )}
-
-        {/* Action Buttons */}
-        <Box display="flex" gap={2} justifyContent="flex-end">
-          <Button
-            variant="outlined"
-            startIcon={<Refresh />}
-            onClick={loadSettings}
-            disabled={saving}
-          >
-            Neu laden
-          </Button>
-        </Box>
 
         {/* Loading Overlay */}
         {saving && (
@@ -381,15 +654,15 @@ const WebsiteSettingsPage = () => {
             left={0}
             right={0}
             bottom={0}
-            bgcolor="rgba(0,0,0,0.5)"
+            bgcolor="rgba(0,0,0,0.7)"
             display="flex"
             alignItems="center"
             justifyContent="center"
             zIndex={9999}
           >
-            <Paper sx={{ p: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-              <CircularProgress size={24} />
-              <Typography>Speichere Einstellungen...</Typography>
+            <Paper sx={{ p: 4, display: 'flex', alignItems: 'center', gap: 3, borderRadius: 3 }}>
+              <CircularProgress size={32} />
+              <Typography variant="h6">Speichere Einstellungen...</Typography>
             </Paper>
           </Box>
         )}
