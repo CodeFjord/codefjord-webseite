@@ -67,7 +67,8 @@ import {
   Warning,
   Info,
   Error,
-  GetApp
+  GetApp,
+  Visibility
 } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../store/auth';
@@ -152,11 +153,11 @@ const navItems = [
     roles: ['admin']
   },
   { 
-    label: 'App Download', 
-    icon: <GetApp />, 
-    path: '/app-download',
-    description: 'iOS App herunterladen',
-    color: 'info',
+    label: 'Website-Einstellungen', 
+    icon: <Settings />, 
+    path: '/website-settings',
+    description: 'Coming Soon & Wartungsmodus',
+    color: 'primary',
     roles: ['admin']
   },
 ];
@@ -313,6 +314,18 @@ const AdminLayout = ({ children }) => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleAppDownload = () => {
+    navigate('/app-download');
+    handleUserMenuClose();
+  };
+
+  const handleFrontendPreview = () => {
+    // Öffne Frontend mit Admin-Bypass-Parameter
+    const frontendUrl = 'http://localhost:5174?admin_token=true';
+    window.open(frontendUrl, '_blank');
+    handleUserMenuClose();
   };
 
   const handleSettingsOpen = () => {
@@ -738,6 +751,18 @@ const AdminLayout = ({ children }) => {
             <Settings fontSize="small" />
           </ListItemIcon>
           Einstellungen
+        </MenuItem>
+        <MenuItem onClick={handleAppDownload}>
+          <ListItemIcon>
+            <GetApp fontSize="small" />
+          </ListItemIcon>
+          App Download
+        </MenuItem>
+        <MenuItem onClick={handleFrontendPreview}>
+          <ListItemIcon>
+            <Visibility fontSize="small" />
+          </ListItemIcon>
+          Frontend Vorschau
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>

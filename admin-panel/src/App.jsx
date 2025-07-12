@@ -14,6 +14,7 @@ import MediaPage from './pages/MediaPage';
 import ContactPage from './pages/ContactPage';
 import UsersPage from './pages/UsersPage';
 import AppDownloadPage from './pages/AppDownloadPage';
+import WebsiteSettingsPage from './pages/WebsiteSettingsPage';
 import './App.css'
 import { useEffect } from 'react';
 import { useAuthStore } from './store/auth';
@@ -107,6 +108,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AppDownloadPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/website-settings"
+            element={
+              <ProtectedRoute>
+                <WebsiteSettingsPage />
               </ProtectedRoute>
             }
           />

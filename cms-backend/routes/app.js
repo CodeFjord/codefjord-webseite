@@ -161,4 +161,40 @@ router.get('/download-stats', auth, permissions.users.read, async (req, res) => 
   }
 });
 
+// Admin-Status prüfen (öffentlich zugänglich)
+router.get('/admin-status', async (req, res) => {
+  try {
+    console.log('Admin status check request headers:', req.headers);
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    console.log('Extracted token:', token ? 'exists' : 'not found');
+    
+    if (!token) {
+      console.log('No token provided, returning isAdmin: false');
+      return res.json({ isAdmin: false });
+    }
+
+    // Token validieren
+    const jwt = await import('jsonwebtoken');
+    const { User } = await import('../models/index.js');
+    
+    console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+    const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
+    console.log('Token decoded:', decoded);
+    
+    const user = await User.findByPk(decoded.userId);
+    console.log('User found:', user ? { id: user.id, email: user.email, role: user.role } : 'not found');
+    
+    if (!user || user.role !== 'admin') {
+      console.log('User not found or not admin, returning isAdmin: false');
+      return res.json({ isAdmin: false });
+    }
+
+    console.log('User is admin, returning isAdmin: true');
+    res.json({ isAdmin: true, user: { id: user.id, email: user.email, role: user.role } });
+  } catch (error) {
+    console.error('Admin status check error:', error);
+    res.json({ isAdmin: false });
+  }
+});
+
 export default router; 

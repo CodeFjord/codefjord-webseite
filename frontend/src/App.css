@@ -40,6 +40,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  line-height: 1;
 }
 
 .logo img {
@@ -80,9 +81,97 @@ body {
   width: 100%;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-links a:hover:not(.admin-link),
+.nav-links a.active:not(.admin-link) {
   color: var(--accent-color);
+}
+
+/* Admin Indicator */
+.admin-indicator {
+  /* Entferne den zusätzlichen Abstand, um mit anderen Navbar-Links konsistent zu sein */
+}
+
+.nav-links .admin-link,
+.nav-links a.admin-link,
+.nav-links button.admin-link,
+.admin-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dc3545 !important;
+  font-weight: 500;
+  font-size: 1.08rem;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Spezifische Regeln für Admin-Links in der Navbar */
+.navbar .nav-links .admin-link,
+.navbar .nav-links a.admin-link,
+.navbar .nav-links button.admin-link {
+  color: #dc3545 !important;
+}
+
+.admin-link::after {
+  content: '';
+  display: block;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border-radius: 2px;
+  transition: width 0.3s;
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+}
+
+.admin-link:hover::after {
+  width: 100%;
+}
+
+.nav-links .admin-link:hover,
+.nav-links .admin-link.active,
+.nav-links a.admin-link:hover,
+.nav-links button.admin-link:hover,
+.admin-link:hover {
+  color: #c82333 !important;
+}
+
+/* Spezifische Hover-Regeln für Admin-Links in der Navbar */
+.navbar .nav-links .admin-link:hover,
+.navbar .nav-links a.admin-link:hover,
+.navbar .nav-links button.admin-link:hover {
+  color: #c82333 !important;
+}
+
+.admin-indicator-mobile {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.admin-indicator-mobile .admin-link {
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.75rem 0;
+}
+
+.logout-btn {
+  color: #dc3545 !important;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.logout-btn:hover {
+  color: #c82333 !important;
 }
 
 /* HERO */
@@ -355,6 +444,7 @@ body {
   flex-direction: row;
   gap: 0.7rem;
   margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
 }
 
 .social-links a {
@@ -605,6 +695,7 @@ body {
 
 .cta-content .btn {
   margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .features-content {
@@ -618,6 +709,7 @@ body {
 .features-text {
   flex: 1 1 340px;
   min-width: 320px;
+  padding-bottom: 1rem;
 }
 
 .features-image {
@@ -1951,5 +2043,225 @@ body {
   .project-meta {
     flex-direction: column;
     gap: 0.5rem;
+  }
+}
+
+/* ===== BAUARBEITER-RAHMEN ===== */
+.construction-frame {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Admin-Warnung oben */
+.admin-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 0.75rem 0;
+  box-shadow: 0 2px 12px rgba(255, 107, 53, 0.3);
+  animation: slideDown 0.5s ease-out;
+}
+
+.admin-warning-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-warning-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.admin-warning-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-warning-text strong {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.admin-warning-text span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.admin-warning-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-warning-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Bauarbeiter-Rahmen */
+.construction-border {
+  position: fixed;
+  background: repeating-linear-gradient(
+    45deg,
+    #ff6b35,
+    #ff6b35 10px,
+    #f7931e 10px,
+    #f7931e 20px
+  );
+  z-index: 9998;
+}
+
+.construction-border-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+
+.construction-border-right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+}
+
+.construction-border-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+
+.construction-border-left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 8px;
+}
+
+/* Bauarbeiter-Icons in den Ecken */
+.construction-corner {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  background: #ff6b35;
+  border: 3px solid #f7931e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 9999;
+  animation: pulse 2s infinite;
+}
+
+.construction-corner-tl {
+  top: 12px;
+  left: 12px;
+}
+
+.construction-corner-tr {
+  top: 12px;
+  right: 12px;
+}
+
+.construction-corner-bl {
+  bottom: 12px;
+  left: 12px;
+}
+
+.construction-corner-br {
+  bottom: 12px;
+  right: 12px;
+}
+
+/* Hauptinhalt mit Abstand */
+.construction-content {
+  padding-top: 60px; /* Abstand für Admin-Warnung */
+}
+
+/* Animationen */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-warning-content {
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+  
+  .admin-warning-text strong {
+    font-size: 0.85rem;
+  }
+  
+  .admin-warning-text span {
+    font-size: 0.8rem;
+  }
+  
+  .construction-corner {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .construction-corner-tl {
+    top: 8px;
+    left: 8px;
+  }
+  
+  .construction-corner-tr {
+    top: 8px;
+    right: 8px;
+  }
+  
+  .construction-corner-bl {
+    bottom: 8px;
+    left: 8px;
+  }
+  
+  .construction-corner-br {
+    bottom: 8px;
+    right: 8px;
   }
 }

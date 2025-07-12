@@ -42,7 +42,38 @@ router.post('/', auth, permissions.portfolio.create, async (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Titel und Beschreibung sind erforderlich' });
     }
-    const portfolio = await Portfolio.create({ ...req.body });
+    
+    // Daten validieren und bereinigen
+    const createData = { ...req.body };
+    
+    // completionDate validieren - robustere Validierung
+    if (createData.completionDate && createData.completionDate !== '') {
+      // Prüfe ob es ein gültiges Datum ist
+      if (createData.completionDate === 'Invalid date' || createData.completionDate === 'null') {
+        createData.completionDate = null;
+      } else {
+        const date = new Date(createData.completionDate);
+        if (isNaN(date.getTime())) {
+          createData.completionDate = null;
+        } else {
+          createData.completionDate = date;
+        }
+      }
+    } else {
+      createData.completionDate = null;
+    }
+    
+    // Leere Strings zu null konvertieren für optionale Felder
+    if (createData.url === '') createData.url = null;
+    if (createData.imageUrl === '') createData.imageUrl = null;
+    if (createData.slug === '') createData.slug = null;
+    if (createData.client === '') createData.client = null;
+    if (createData.content === '') createData.content = null;
+    
+    // Debug-Ausgabe
+    console.log('Cleaned create data:', createData);
+    
+    const portfolio = await Portfolio.create(createData);
     res.status(201).json(portfolio);
   } catch (error) {
     console.error('Error creating portfolio:', error);
@@ -58,7 +89,38 @@ router.put('/:id', auth, permissions.portfolio.update, async (req, res) => {
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio-Projekt nicht gefunden' });
     }
-    await portfolio.update({ ...req.body });
+    
+    // Daten validieren und bereinigen
+    const updateData = { ...req.body };
+    
+    // completionDate validieren - robustere Validierung
+    if (updateData.completionDate && updateData.completionDate !== '') {
+      // Prüfe ob es ein gültiges Datum ist
+      if (updateData.completionDate === 'Invalid date' || updateData.completionDate === 'null') {
+        updateData.completionDate = null;
+      } else {
+        const date = new Date(updateData.completionDate);
+        if (isNaN(date.getTime())) {
+          updateData.completionDate = null;
+        } else {
+          updateData.completionDate = date;
+        }
+      }
+    } else {
+      updateData.completionDate = null;
+    }
+    
+    // Leere Strings zu null konvertieren für optionale Felder
+    if (updateData.url === '') updateData.url = null;
+    if (updateData.imageUrl === '') updateData.imageUrl = null;
+    if (updateData.slug === '') updateData.slug = null;
+    if (updateData.client === '') updateData.client = null;
+    if (updateData.content === '') updateData.content = null;
+    
+    // Debug-Ausgabe
+    console.log('Cleaned update data:', updateData);
+    
+    await portfolio.update(updateData);
     res.json(portfolio);
   } catch (error) {
     console.error('Error updating portfolio:', error);

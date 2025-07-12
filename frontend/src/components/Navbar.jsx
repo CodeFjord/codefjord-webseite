@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield, LogOut } from 'lucide-react';
 import logo from '../assets/images/logo.png';
 import { menuApi } from '../api/cms';
+import useAuth from '../store/auth.js';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
   const menuRef = useRef(null);
+  const { isAdmin, logout } = useAuth();
 
   // Lade Navbar-Menü aus dem CMS
   useEffect(() => {
@@ -120,6 +122,54 @@ const Navbar = () => {
               )}
             </li>
           ))}
+          {isAdmin && (
+            <>
+              <li className="admin-indicator">
+                <Link 
+                  to="https://admin.code-fjord.de" 
+                  className="admin-link"
+                  style={{ 
+                    color: '#dc3545', 
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontWeight: '500',
+                    fontSize: '1.08rem',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#c82333'}
+                  onMouseLeave={(e) => e.target.style.color = '#dc3545'}
+                >
+                  <Shield size={18} />
+                  <span>Admin</span>
+                </Link>
+              </li>
+              <li className="admin-indicator">
+                <button 
+                  onClick={logout} 
+                  className="admin-link logout-btn"
+                  style={{ 
+                    color: '#dc3545', 
+                    background: 'none',
+                    border: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontWeight: '500',
+                    fontSize: '1.08rem',
+                    cursor: 'pointer',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#c82333'}
+                  onMouseLeave={(e) => e.target.style.color = '#dc3545'}
+                >
+                  <LogOut size={18} />
+                  <span>Logout</span>
+                </button>
+              </li>
+            </>
+          )}
         </ul>
         <button className="mobile-menu-btn" onClick={toggleMenu} aria-label="Menü öffnen" style={{ display: 'block' }}>
           <Menu size={24} />
@@ -162,6 +212,60 @@ const Navbar = () => {
                   )}
                 </li>
               ))}
+              {isAdmin && (
+                <>
+                  <li className="admin-indicator-mobile">
+                    <Link 
+                      to="https://admin.code-fjord.de" 
+                      className="admin-link" 
+                      onClick={closeMenu}
+                      style={{ 
+                        color: '#dc3545', 
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontWeight: '500',
+                        fontSize: '1rem',
+                        transition: 'color 0.2s',
+                        width: '100%',
+                        padding: '0.75rem 0'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#c82333'}
+                      onMouseLeave={(e) => e.target.style.color = '#dc3545'}
+                    >
+                      <Shield size={18} />
+                      <span>Admin Panel</span>
+                    </Link>
+                  </li>
+                  <li className="admin-indicator-mobile">
+                    <button 
+                      onClick={() => { logout(); closeMenu(); }} 
+                      className="admin-link logout-btn"
+                      style={{ 
+                        color: '#dc3545', 
+                        background: 'none',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontWeight: '500',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        transition: 'color 0.2s',
+                        width: '100%',
+                        padding: '0.75rem 0',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = '#c82333'}
+                      onMouseLeave={(e) => e.target.style.color = '#dc3545'}
+                    >
+                      <LogOut size={18} />
+                      <span>Logout</span>
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           </aside>
         </div>

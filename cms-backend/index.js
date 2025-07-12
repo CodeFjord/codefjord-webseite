@@ -12,6 +12,7 @@ import menuRoutes from './routes/menus.js';
 import teamMemberRoutes from './routes/teamMembers.js';
 import notificationRoutes from './routes/notifications.js';
 import appRoutes from './routes/app.js';
+import websiteSettingsRoutes from './routes/websiteSettings.js';
 import path from 'path';
 
 dotenv.config();
@@ -34,6 +35,7 @@ const corsOptions = {
       // Development
       'http://localhost:3000',
       'http://localhost:5173',
+      'http://localhost:5174',
       'http://localhost:4173',
       'http://127.0.0.1:5173',
       'http://127.0.0.1:4173',
@@ -93,6 +95,7 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/team-members', teamMemberRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/app', appRoutes);
+app.use('/api/website-settings', websiteSettingsRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -121,6 +124,7 @@ import Menu from './models/Menu.js';
 import MenuItem from './models/MenuItem.js';
 import TeamMember from './models/TeamMember.js';
 import Notification from './models/Notification.js';
+import WebsiteSettings from './models/WebsiteSettings.js';
 
 // Register associations
 const models = {
@@ -133,7 +137,8 @@ const models = {
   Menu,
   MenuItem,
   TeamMember,
-  Notification
+  Notification,
+  WebsiteSettings
 };
 
 // Call associate function for each model if it exists

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // CMS API Client
 const cmsApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
   timeout: 10000,
 });
 
@@ -241,6 +241,68 @@ export const homeApi = {
     } catch (error) {
       console.error('Error fetching active home data:', error);
       return [];
+    }
+  }
+};
+
+// Website Settings API
+export const websiteSettingsApi = {
+  // Get public settings (for frontend)
+  getPublic: async () => {
+    try {
+      const response = await cmsApi.get('/website-settings/public');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching public website settings:', error);
+      return {};
+    }
+  },
+
+  // Get all settings (for admin panel)
+  getAll: async () => {
+    try {
+      const response = await cmsApi.get('/website-settings');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching website settings:', error);
+      return {};
+    }
+  },
+
+  // Update setting
+  update: async (key, value, description) => {
+    try {
+      const response = await cmsApi.post('/website-settings', {
+        key,
+        value,
+        description
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating website setting:', error);
+      throw error;
+    }
+  }
+};
+
+// Admin API
+export const adminApi = {
+  // Check admin status
+  checkStatus: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log('Token from localStorage:', token ? 'exists' : 'not found');
+      
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      console.log('Request headers:', headers);
+      
+      const response = await cmsApi.get('/app/admin-status', { headers });
+      console.log('Admin status response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      console.error('Error response:', error.response?.data);
+      return { isAdmin: false };
     }
   }
 };
