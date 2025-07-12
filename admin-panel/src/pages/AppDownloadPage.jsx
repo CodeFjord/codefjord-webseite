@@ -16,7 +16,8 @@ import {
   CircularProgress,
   Paper,
   IconButton,
-  Tooltip
+  Tooltip,
+  Snackbar
 } from '@mui/material';
 import {
   Download,
@@ -39,6 +40,7 @@ const AppDownloadPage = () => {
   const [downloadStats, setDownloadStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
   useEffect(() => {
     loadAppData();
@@ -47,12 +49,69 @@ const AppDownloadPage = () => {
   const loadAppData = async () => {
     try {
       setLoading(true);
-      const [infoData, statsData] = await Promise.all([
-        appApi.getDownloadInfo(),
-        appApi.getDownloadStats()
-      ]);
-      setAppInfo(infoData);
-      setDownloadStats(statsData);
+      console.log('Loading app data...');
+      
+      // Fallback-Daten falls Backend nicht erreichbar
+      const fallbackAppInfo = {
+        name: 'CodeFjord Admin',
+        version: '1.0.0',
+        buildNumber: '1',
+        platform: 'iOS',
+        downloadUrl: 'https://cdn.code-fjord.de/apps/CodeFjordAdmin.ipa',
+        qrCodeUrl: 'https://cdn.code-fjord.de/apps/qr-code.png',
+        manifestUrl: 'https://cdn.code-fjord.de/apps/manifest.plist',
+        installUrl: 'itms-services://?action=download-manifest&url=https://cdn.code-fjord.de/apps/manifest.plist',
+        installInstructions: [
+          '1. Tippen Sie auf den Download-Link oder scannen Sie den QR-Code',
+          '2. Wählen Sie "Installieren" aus',
+          '3. Gehen Sie zu Einstellungen → Allgemein → VPN & Geräteverwaltung',
+          '4. Vertrauen Sie dem Entwickler "CodeFjord UG"',
+          '5. Die App ist jetzt verfügbar auf Ihrem Home-Screen'
+        ],
+        requirements: {
+          iosVersion: '14.0+',
+          deviceTypes: ['iPhone', 'iPad'],
+          storage: '50 MB'
+        },
+        features: [
+          'Dashboard mit Echtzeit-Daten',
+          'Blog-Verwaltung',
+          'Portfolio-Management',
+          'Seiten-Editor',
+          'Team-Mitglieder-Verwaltung',
+          'Medien-Bibliothek',
+          'Kontakt-Nachrichten',
+          'Dark/Light Mode',
+          'Offline-Funktionalität'
+        ],
+        lastUpdated: new Date().toISOString(),
+        developer: 'CodeFjord UG (haftungsbeschränkt) i.G.',
+        supportEmail: 'support@codefjord.de'
+      };
+      
+      const fallbackStats = {
+        totalDownloads: 0,
+        downloadsThisMonth: 0,
+        downloadsThisWeek: 0,
+        activeUsers: 0
+      };
+      
+      try {
+        const [infoData, statsData] = await Promise.all([
+          appApi.getDownloadInfo(),
+          appApi.getDownloadStats()
+        ]);
+        
+        console.log('App info data received from API:', infoData);
+        console.log('App stats data received from API:', statsData);
+        
+        setAppInfo(infoData);
+        setDownloadStats(statsData);
+      } catch (apiError) {
+        console.warn('API nicht erreichbar, verwende Fallback-Daten:', apiError);
+        setAppInfo(fallbackAppInfo);
+        setDownloadStats(fallbackStats);
+      }
     } catch (err) {
       console.error('Fehler beim Laden der App-Daten:', err);
       setError('Fehler beim Laden der App-Informationen');
@@ -62,14 +121,33 @@ const AppDownloadPage = () => {
   };
 
   const handleDownload = () => {
-    if (appInfo?.installUrl) {
+    console.log('Download button clicked');
+    
+    // Fallback-URLs falls Backend nicht verfügbar
+    const fallbackInstallUrl = 'itms-services://?action=download-manifest&url=https://cdn.code-fjord.de/app/manifest.plist';
+    const fallbackDownloadUrl = 'https://cdn.code-fjord.de/app/CodeFjordAdmin.ipa';
+    
+    const installUrl = appInfo?.installUrl || fallbackInstallUrl;
+    const downloadUrl = appInfo?.downloadUrl || fallbackDownloadUrl;
+    
+    console.log('Using installUrl:', installUrl);
+    console.log('Using downloadUrl:', downloadUrl);
+    
+    try {
       // Für iOS-Geräte: Öffne itms-services URL
       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        window.location.href = appInfo.installUrl;
+        console.log('iOS device detected, redirecting to:', installUrl);
+        setSnackbar({ open: true, message: 'iOS-Installation wird gestartet...', severity: 'info' });
+        window.location.href = installUrl;
       } else {
         // Für andere Geräte: Zeige Download-Link an
-        window.open(appInfo.downloadUrl, '_blank');
+        console.log('Non-iOS device, opening download URL:', downloadUrl);
+        setSnackbar({ open: true, message: 'Download-Link wird geöffnet...', severity: 'info' });
+        window.open(downloadUrl, '_blank');
       }
+    } catch (err) {
+      console.error('Download error:', err);
+      setSnackbar({ open: true, message: 'Fehler beim Download', severity: 'error' });
     }
   };
 
@@ -153,6 +231,7 @@ const AppDownloadPage = () => {
                     onClick={handleDownload}
                     fullWidth
                     sx={{ py: 2 }}
+                    disabled={!appInfo}
                   >
                     App herunterladen
                   </Button>
@@ -383,6 +462,22 @@ const AppDownloadPage = () => {
           </Card>
         </Grid>
       </Grid>
+      
+      {/* Snackbar für Feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
