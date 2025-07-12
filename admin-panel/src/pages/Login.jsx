@@ -8,7 +8,8 @@ import {
   CircularProgress, 
   Alert,
   InputAdornment,
-  IconButton
+  IconButton,
+  useTheme
 } from '@mui/material';
 import { 
   Visibility, 
@@ -20,6 +21,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../store/auth';
 import codefjordLogo from '../assets/codefjord.png';
+import codefjordLogoWhite from '../assets/codefjord-white.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,6 +29,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading, error } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +53,9 @@ const Login = () => {
         height: '100vh',
         minHeight: '100vh',
         minWidth: '100vw',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: theme.palette.mode === 'dark' 
+          ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
+          : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -64,18 +69,29 @@ const Login = () => {
           width: '100%',
           maxWidth: 440,
           borderRadius: 4,
-          background: 'rgba(255, 255, 255, 0.85)',
+          background: theme.palette.mode === 'dark' 
+            ? 'rgba(30, 41, 59, 0.95)'
+            : 'rgba(255, 255, 255, 0.85)',
           backdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 32px rgba(37, 99, 235, 0.10)',
+          boxShadow: theme.palette.mode === 'dark'
+            ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+            : '0 8px 32px rgba(37, 99, 235, 0.10)',
         }}
       >
         {/* Logo und Header */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
             <img
-              src={codefjordLogo}
+              src={theme.palette.mode === 'dark' ? codefjordLogoWhite : codefjordLogo}
               alt="CodeFjord Logo"
-              style={{ width: 64, height: 64, borderRadius: 12, boxShadow: '0 2px 8px rgba(37,99,235,0.10)' }}
+              style={{ 
+                width: 64, 
+                height: 64, 
+                borderRadius: 12, 
+                boxShadow: theme.palette.mode === 'dark'
+                  ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+                  : '0 2px 8px rgba(37,99,235,0.10)'
+              }}
             />
           </Box>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
@@ -187,11 +203,17 @@ const Login = () => {
               py: 1.5,
               fontSize: '1rem',
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+                : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
+                background: theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)'
+                  : 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
                 transform: 'translateY(-1px)',
-                boxShadow: '0 8px 25px rgba(37, 99, 235, 0.3)',
+                boxShadow: theme.palette.mode === 'dark'
+                  ? '0 8px 25px rgba(59, 130, 246, 0.4)'
+                  : '0 8px 25px rgba(37, 99, 235, 0.3)',
               },
               transition: 'all 0.2s ease-in-out'
             }}
@@ -204,7 +226,7 @@ const Login = () => {
       </Paper>
       {/* Footer in der Card */}
       <Box sx={{ position: 'absolute', bottom: 24, left: 0, width: '100%', textAlign: 'center', pointerEvents: 'auto' }}>
-        <Typography variant="caption" sx={{ color: '#fff', fontWeight: 500 }}>
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>
           © {new Date().getFullYear()} CodeFjord UG (haftungsbeschränkt) i.G. Alle Rechte vorbehalten.
         </Typography>
         <Box sx={{ mt: 0.5, display: 'flex', justifyContent: 'center', gap: 2 }}>
@@ -212,7 +234,15 @@ const Login = () => {
             href="https://code-fjord.de/impressum"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#fff', textDecoration: 'underline', fontSize: '0.85em', fontWeight: 500 }}
+            style={{ 
+              color: 'rgba(255,255,255,0.9)', 
+              textDecoration: 'underline', 
+              fontSize: '0.85em', 
+              fontWeight: 500,
+              '&:hover': {
+                color: '#fff'
+              }
+            }}
           >
             Impressum
           </a>
@@ -221,7 +251,15 @@ const Login = () => {
             href="https://code-fjord.de/datenschutz"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#fff', textDecoration: 'underline', fontSize: '0.85em', fontWeight: 500 }}
+            style={{ 
+              color: 'rgba(255,255,255,0.9)', 
+              textDecoration: 'underline', 
+              fontSize: '0.85em', 
+              fontWeight: 500,
+              '&:hover': {
+                color: '#fff'
+              }
+            }}
           >
             Datenschutz
           </a>

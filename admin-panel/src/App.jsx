@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import theme from './theme';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
@@ -18,15 +17,24 @@ import WebsiteSettingsPage from './pages/WebsiteSettingsPage';
 import './App.css'
 import { useEffect } from 'react';
 import { useAuthStore } from './store/auth';
+import useThemeStore from './store/themeStore';
 
 function App() {
+  const { currentTheme, initTheme } = useThemeStore();
+
   useEffect(() => {
     // User-Daten nach Reload laden, falls Token vorhanden
     useAuthStore.getState().refreshUser();
-  }, []);
+    
+    // Theme initialisieren
+    const cleanupTheme = initTheme();
+    
+    // Cleanup beim Unmount
+    return cleanupTheme;
+  }, [initTheme]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentTheme}>
       <CssBaseline />
       <Router>
         <Routes>

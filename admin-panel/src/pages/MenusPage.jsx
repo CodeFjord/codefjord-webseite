@@ -539,7 +539,7 @@ const MenusPage = () => {
                 <TableContainer component={Paper} variant="outlined">
                   <Table size="small">
                     <TableHead>
-                      <TableRow sx={{ backgroundColor: 'grey.50' }}>
+                      <TableRow>
                         <TableCell sx={{ fontWeight: 600 }}>Label</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>URL</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>Target</TableCell>

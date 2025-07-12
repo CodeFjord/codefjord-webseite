@@ -385,7 +385,7 @@ const PagesPage = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Seite</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Slug</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>

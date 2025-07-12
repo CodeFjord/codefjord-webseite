@@ -313,7 +313,7 @@ const ContactPage = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Absender</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Betreff</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Nachricht</TableCell>
