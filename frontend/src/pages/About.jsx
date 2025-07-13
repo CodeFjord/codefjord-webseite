@@ -91,7 +91,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="section" style={{ backgroundColor: 'var(--bg-light)' }}>
+      <section className="section" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
         <div className="section-container">
           <div className="section-header">
             <h2 className="section-title">Unser Team</h2>
@@ -131,7 +131,7 @@ const About = () => {
                     )}
                   </div>
                   <h3>{member.name}</h3>
-                  <p style={{ color: 'var(--primary-color)', fontWeight: 600 }}>{member.role}</p>
+                  <p style={{ color: 'var(--color-accent)', fontWeight: 600 }}>{member.role}</p>
                   {member.bio && <p>{member.bio}</p>}
                 </motion.div>
               ))}

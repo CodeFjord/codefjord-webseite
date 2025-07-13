@@ -8,6 +8,7 @@ import Media from './Media.js';
 import Menu from './Menu.js';
 import MenuItem from './MenuItem.js';
 import TeamMember from './TeamMember.js';
+import WebsiteSettings from './WebsiteSettings.js';
 
 // Associations
 Menu.hasMany(MenuItem, { foreignKey: 'menuId' });
@@ -23,5 +24,6 @@ export {
   Media,
   Menu,
   MenuItem,
-  TeamMember
+  TeamMember,
+  WebsiteSettings
 }; 

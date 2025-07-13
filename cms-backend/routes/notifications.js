@@ -18,9 +18,22 @@ router.get('/', auth, permissions.notifications.read, async (req, res) => {
     const notifications = await Notification.findAll({
       order: [['createdAt', 'DESC']]
     });
-    res.json(notifications);
+    res.json({ notifications });
   } catch (error) {
     console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Server-Fehler' });
+  }
+});
+
+// Ungelesene Benachrichtigungen zählen (Redakteure und Admins)
+router.get('/unread-count', auth, permissions.notifications.read, async (req, res) => {
+  try {
+    const count = await Notification.count({
+      where: { read: false }
+    });
+    res.json({ count });
+  } catch (error) {
+    console.error('Error counting unread notifications:', error);
     res.status(500).json({ error: 'Server-Fehler' });
   }
 });
@@ -91,21 +104,8 @@ router.delete('/:id', auth, permissions.notifications.delete, async (req, res) =
   }
 });
 
-// Ungelesene Benachrichtigungen zählen (Redakteure und Admins)
-router.get('/unread/count', auth, permissions.notifications.read, async (req, res) => {
-  try {
-    const count = await Notification.count({
-      where: { read: false }
-    });
-    res.json({ count });
-  } catch (error) {
-    console.error('Error counting unread notifications:', error);
-    res.status(500).json({ error: 'Server-Fehler' });
-  }
-});
-
 // Benachrichtigung als gelesen markieren (Redakteure und Admins)
-router.patch('/:id/read', auth, permissions.notifications.read, async (req, res) => {
+router.put('/:id/read', auth, permissions.notifications.read, async (req, res) => {
   try {
     const { id } = req.params;
     const notification = await Notification.findByPk(id);
@@ -118,6 +118,20 @@ router.patch('/:id/read', auth, permissions.notifications.read, async (req, res)
     res.json(notification);
   } catch (error) {
     console.error('Error marking notification as read:', error);
+    res.status(500).json({ error: 'Server-Fehler' });
+  }
+});
+
+// Alle Benachrichtigungen als gelesen markieren (Redakteure und Admins)
+router.put('/mark-all-read', auth, permissions.notifications.read, async (req, res) => {
+  try {
+    await Notification.update(
+      { read: true },
+      { where: { read: false } }
+    );
+    res.json({ message: 'Alle Benachrichtigungen als gelesen markiert' });
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
     res.status(500).json({ error: 'Server-Fehler' });
   }
 });

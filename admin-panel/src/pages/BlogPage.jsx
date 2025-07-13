@@ -402,7 +402,7 @@ const BlogPage = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Artikel</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Tags</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>

@@ -351,7 +351,7 @@ const TeamMembersPage = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Mitglied</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Bio</TableCell>

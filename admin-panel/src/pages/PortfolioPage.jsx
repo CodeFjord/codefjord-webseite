@@ -410,7 +410,7 @@ const PortfolioPage = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Projekt</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Kategorie</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>

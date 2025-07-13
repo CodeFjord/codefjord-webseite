@@ -11,6 +11,8 @@ import mediaRoutes from './routes/media.js';
 import menuRoutes from './routes/menus.js';
 import teamMemberRoutes from './routes/teamMembers.js';
 import notificationRoutes from './routes/notifications.js';
+import appRoutes from './routes/app.js';
+import websiteSettingsRoutes from './routes/websiteSettings.js';
 import path from 'path';
 
 dotenv.config();
@@ -18,8 +20,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4444;
 
-// CORS wird von Nginx gehandhabt - temporär deaktiviert
-/*
+// CORS für mobile App aktiviert
 const corsOptions = {
   origin: function (origin, callback) {
     console.log('CORS request from origin:', origin);
@@ -34,15 +35,32 @@ const corsOptions = {
       // Development
       'http://localhost:3000',
       'http://localhost:5173',
+      'http://localhost:5174',
       'http://localhost:4173',
       'http://127.0.0.1:5173',
-      'http://127.0.0.1:4173'
+      'http://127.0.0.1:4173',
+      // Mobile App (React Native)
+      'http://192.168.178.144:4444',
+      'http://192.168.178.144:3000',
+      'http://192.168.178.144:5173',
+      // Erlaube alle lokale IPs für Entwicklung
+      /^http:\/\/192\.168\.\d+\.\d+:\d+$/
     ];
     
-    // Erlaube requests ohne origin (z.B. Postman, curl)
+    // Erlaube requests ohne origin (z.B. mobile Apps, Postman, curl)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Prüfe gegen Regex für lokale IPs
+    const isLocalIP = allowedOrigins.some(allowed => {
+      if (typeof allowed === 'string') {
+        return allowed === origin;
+      } else if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return false;
+    });
+    
+    if (isLocalIP) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
@@ -55,7 +73,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-*/
 
 // Debug-Middleware für alle Requests
 app.use((req, res, next) => {
@@ -77,6 +94,8 @@ app.use('/api/media', mediaRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/team-members', teamMemberRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/app', appRoutes);
+app.use('/api/website-settings', websiteSettingsRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -105,7 +124,7 @@ import Menu from './models/Menu.js';
 import MenuItem from './models/MenuItem.js';
 import TeamMember from './models/TeamMember.js';
 import Notification from './models/Notification.js';
-import { SocketAddress } from 'net';
+import WebsiteSettings from './models/WebsiteSettings.js';
 
 // Register associations
 const models = {
@@ -118,7 +137,8 @@ const models = {
   Menu,
   MenuItem,
   TeamMember,
-  Notification
+  Notification,
+  WebsiteSettings
 };
 
 // Call associate function for each model if it exists
@@ -134,7 +154,7 @@ Object.values(models).forEach(model => {
     await sequelize.authenticate();
     await sequelize.sync();
     console.log('DB verbunden & synchronisiert.');
-    app.listen(PORT, () => console.log(`Server läuft auf https://${SocketAddress}:${PORT}`));
+    app.listen(PORT, () => console.log(`Server läuft auf https://localhost:${PORT}`));
   } catch (err) {
     console.error('DB-Fehler:', err);
     process.exit(1);

@@ -66,7 +66,9 @@ import {
   CheckCircle,
   Warning,
   Info,
-  Error
+  Error,
+  GetApp,
+  Visibility
 } from '@mui/icons-material';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../store/auth';
@@ -74,6 +76,8 @@ import { authAPI } from '../api/client';
 import useNotifications from '../hooks/useNotifications';
 import { canDelete } from '../utils/permissions';
 import codefjordLogo from '../assets/codefjord.png';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '@mui/material/styles';
 
 const drawerWidth = 280;
 
@@ -150,6 +154,14 @@ const navItems = [
     color: 'warning',
     roles: ['admin']
   },
+  { 
+    label: 'Website-Einstellungen', 
+    icon: <Settings />, 
+    path: '/website-settings',
+    description: 'Coming Soon & Wartungsmodus',
+    color: 'primary',
+    roles: ['admin']
+  },
 ];
 
 const AdminLayout = ({ children }) => {
@@ -161,6 +173,7 @@ const AdminLayout = ({ children }) => {
   const { logout, user, updateUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const theme = useTheme();
   const { 
     notifications, 
     unreadCount, 
@@ -306,6 +319,18 @@ const AdminLayout = ({ children }) => {
     navigate('/login');
   };
 
+  const handleAppDownload = () => {
+    navigate('/app-download');
+    handleUserMenuClose();
+  };
+
+  const handleFrontendPreview = () => {
+    // Öffne Frontend mit Admin-Bypass-Parameter
+    const frontendUrl = 'http://localhost:5174?admin_token=true';
+    window.open(frontendUrl, '_blank');
+    handleUserMenuClose();
+  };
+
   const handleSettingsOpen = () => {
     setSettingsOpen(true);
     handleUserMenuClose();
@@ -400,7 +425,9 @@ const AdminLayout = ({ children }) => {
       <Box sx={{ 
         p: 3, 
         mt: { xs: 7, sm: 8 },
-        background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+        background: theme.palette.mode === 'dark'
+          ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+          : 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
         color: 'white',
         position: 'relative',
         overflow: 'hidden'
@@ -425,7 +452,9 @@ const AdminLayout = ({ children }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.10)',
+              boxShadow: theme.palette.mode === 'dark'
+                ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                : '0 4px 12px rgba(37, 99, 235, 0.10)',
               position: 'relative',
               overflow: 'hidden',
               p: 0.5
@@ -480,11 +509,19 @@ const AdminLayout = ({ children }) => {
                       borderRadius: '0 2px 2px 0'
                     } : {},
                     '&.Mui-selected': {
-                      backgroundColor: `${item.color}.light`,
-                      color: `${item.color}.main`,
+                      backgroundColor: theme.palette.mode === 'dark' 
+                        ? 'rgba(59, 130, 246, 0.2)'
+                        : 'rgba(37, 99, 235, 0.1)',
+                      color: theme.palette.mode === 'dark' 
+                        ? '#3b82f6'
+                        : '#2563eb',
                       '&:hover': {
-                        backgroundColor: `${item.color}.main`,
-                        color: 'white',
+                        backgroundColor: theme.palette.mode === 'dark'
+                          ? 'rgba(59, 130, 246, 0.3)'
+                          : 'rgba(37, 99, 235, 0.2)',
+                        color: theme.palette.mode === 'dark' 
+                          ? '#60a5fa'
+                          : '#1d4ed8',
                       },
                       '& .MuiListItemIcon-root': {
                         color: 'inherit',
@@ -500,7 +537,7 @@ const AdminLayout = ({ children }) => {
                 >
                   <ListItemIcon sx={{ 
                     minWidth: 44,
-                    color: isActive ? 'inherit' : 'text.secondary'
+                    color: isActive ? 'inherit' : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'text.secondary')
                   }}>
                     {item.icon}
                   </ListItemIcon>
@@ -508,7 +545,8 @@ const AdminLayout = ({ children }) => {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: isActive ? 600 : 500,
-                      fontSize: '0.95rem'
+                      fontSize: '0.95rem',
+                      color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.9)' : 'inherit'
                     }}
                   />
                   {isActive && (
@@ -536,7 +574,9 @@ const AdminLayout = ({ children }) => {
         p: 2, 
         borderTop: '1px solid', 
         borderColor: 'divider',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+        background: theme.palette.mode === 'dark'
+          ? 'linear-gradient(135deg, #1e293b 0%, #334155 100%)'
+          : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
           <Avatar 
@@ -544,7 +584,9 @@ const AdminLayout = ({ children }) => {
               width: 44, 
               height: 44, 
               background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+              boxShadow: theme.palette.mode === 'dark'
+                ? '0 2px 8px rgba(59, 130, 246, 0.4)'
+                : '0 2px 8px rgba(37, 99, 235, 0.3)',
               fontSize: '1rem',
               fontWeight: 600
             }}
@@ -590,7 +632,9 @@ const AdminLayout = ({ children }) => {
         position="fixed" 
         sx={{ 
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: theme.palette.mode === 'dark'
+            ? 'rgba(30, 41, 59, 0.95)'
+            : 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
           color: 'text.primary',
           borderBottom: '1px solid',
@@ -621,7 +665,9 @@ const AdminLayout = ({ children }) => {
                   width: 32,
                   height: 32,
                   borderRadius: 2,
-                  background: `linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)`,
+                  background: theme.palette.mode === 'dark'
+                    ? 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+                    : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -644,6 +690,7 @@ const AdminLayout = ({ children }) => {
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ThemeToggle variant="icon" size="small" />
             <Tooltip title="Benachrichtigungen">
               <IconButton 
                 color="inherit" 
@@ -691,7 +738,9 @@ const AdminLayout = ({ children }) => {
                   sx={{ 
                     width: 32, 
                     height: 32,
-                    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                    background: theme.palette.mode === 'dark'
+                      ? 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+                      : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
                     fontSize: '0.8rem',
                     fontWeight: 600
                   }}
@@ -713,7 +762,9 @@ const AdminLayout = ({ children }) => {
           sx: {
             mt: 1,
             borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0,0,0,0.4)'
+              : '0 8px 32px rgba(0,0,0,0.12)',
             minWidth: 200
           }
         }}
@@ -729,6 +780,18 @@ const AdminLayout = ({ children }) => {
             <Settings fontSize="small" />
           </ListItemIcon>
           Einstellungen
+        </MenuItem>
+        <MenuItem onClick={handleAppDownload}>
+          <ListItemIcon>
+            <GetApp fontSize="small" />
+          </ListItemIcon>
+          App Download
+        </MenuItem>
+        <MenuItem onClick={handleFrontendPreview}>
+          <ListItemIcon>
+            <Visibility fontSize="small" />
+          </ListItemIcon>
+          Frontend Vorschau
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
@@ -748,7 +811,9 @@ const AdminLayout = ({ children }) => {
           sx: {
             mt: 1,
             borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0,0,0,0.4)'
+              : '0 8px 32px rgba(0,0,0,0.12)',
             minWidth: 350,
             maxHeight: 500
           }
@@ -901,12 +966,12 @@ const AdminLayout = ({ children }) => {
             <FormControlLabel
               control={
                 <Switch
-                  checked={settings.darkMode}
-                  onChange={(e) => setSettings(prev => ({ ...prev, darkMode: e.target.checked }))}
+                  checked={settings.notifications}
+                  onChange={(e) => setSettings(prev => ({ ...prev, notifications: e.target.checked }))}
                   color="primary"
                 />
               }
-              label="Dark Mode"
+              label="Benachrichtigungen"
               sx={{ mb: 2 }}
             />
             <FormControlLabel
@@ -944,9 +1009,13 @@ const AdminLayout = ({ children }) => {
             sx={{
               borderRadius: 2,
               px: 3,
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+                : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
+                background: theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)'
+                  : 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
               }
             }}
           >
@@ -1028,9 +1097,13 @@ const AdminLayout = ({ children }) => {
             sx={{
               borderRadius: 2,
               px: 3,
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: theme.palette.mode === 'dark'
+                ? 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+                : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
+                background: theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)'
+                  : 'linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%)',
               }
             }}
           >
@@ -1053,7 +1126,9 @@ const AdminLayout = ({ children }) => {
               boxSizing: 'border-box', 
               width: drawerWidth,
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0,0,0,0.1)'
+              boxShadow: theme.palette.mode === 'dark'
+                ? '4px 0 20px rgba(0,0,0,0.4)'
+                : '4px 0 20px rgba(0,0,0,0.1)'
             },
           }}
         >
@@ -1068,7 +1143,9 @@ const AdminLayout = ({ children }) => {
               boxSizing: 'border-box', 
               width: drawerWidth,
               border: 'none',
-              boxShadow: '4px 0 20px rgba(0,0,0,0.1)'
+              boxShadow: theme.palette.mode === 'dark'
+                ? '4px 0 20px rgba(0,0,0,0.4)'
+                : '4px 0 20px rgba(0,0,0,0.1)'
             },
           }}
           open

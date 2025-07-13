@@ -12,7 +12,7 @@ router.post('/', ctrl.create);
 router.get('/', auth, permissions.contact.read, ctrl.getAll);
 router.get('/:id', auth, permissions.contact.read, ctrl.getOne);
 router.patch('/:id', auth, permissions.contact.update, ctrl.update);
-router.post('/reply/:id', auth, permissions.contact.reply, ctrl.reply);
+router.post('/:id/reply', auth, permissions.contact.reply, ctrl.reply);
 
 // Nur Admins können löschen
 router.delete('/:id', auth, permissions.contact.delete, ctrl.remove);

@@ -34,3 +34,8 @@ update-existing-users.js
 DEPLOYMENT.md
 SECRETS.md
 cms-backend/migrate+create/*.*
+
+# iOS
+ios/CodeFjordAdmin/generate-app-icons-both-modes.sh
+ios/CodeFjordAdmin/generate-qr-code.sh
+ios/CodeFjordAdmin/generate-app-icons.sh

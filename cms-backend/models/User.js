@@ -35,6 +35,14 @@ User.init({
   lastLogin: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  resetToken: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  resetTokenExpiry: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   sequelize,

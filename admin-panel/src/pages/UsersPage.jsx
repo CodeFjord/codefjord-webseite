@@ -442,16 +442,16 @@ const UsersPage = () => {
         <Paper sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
           <TableContainer>
             <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: 'background.default' }}>
-                  <TableCell sx={{ fontWeight: 600 }}>Benutzer</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>E-Mail</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Letzter Login</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }} align="right">Aktionen</TableCell>
-                </TableRow>
-              </TableHead>
+                          <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 600 }}>Benutzer</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>E-Mail</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Rolle</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Letzter Login</TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">Aktionen</TableCell>
+              </TableRow>
+            </TableHead>
               <TableBody>
                 {filteredUsers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
