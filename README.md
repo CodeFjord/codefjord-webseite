@@ -136,8 +136,8 @@ CodeFjord Webseite/
 
 ```bash
 # 1. Repository klonen
-git clone https://github.com/codefjord/webseite.git
-cd webseite
+git clone https://github.com/CodeFjord/codefjord-webseite.git
+cd codefjord-webseite
 
 # 2. Backend Setup
 cd cms-backend
@@ -170,7 +170,7 @@ PORT=4444
 DB_HOST=localhost
 DB_NAME=codefjord_cms
 DB_USER=your_username
-DB_PASSWORD=your_password
+DB_PASS=your_password
 JWT_SECRET=your_secret_key
 
 # E-Mail (optional)

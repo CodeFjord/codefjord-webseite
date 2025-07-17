@@ -195,27 +195,24 @@ export default App;`}
       </section>
 
       {/* CTA Section */}
-      <section className="section cta-section" style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}>
-        <div className="section-container">
-          <div className="cta-content">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="section-title" style={{ color: 'white' }}>
-                Bereit für Ihr nächstes Projekt?
-              </h2>
-              <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.9)' }}>
-                Lassen Sie uns gemeinsam Ihre Vision in die digitale Realität umsetzen.
-              </p>
-              <Link to="/contact" className="btn btn-primary">
-                Kostenlose Beratung
-              </Link>
-            </motion.div>
-          </div>
-        </div>
+      <section className="cta-section">
+        <motion.div
+          className="cta-content"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <h2>
+            Bereit für Ihr nächstes Projekt?
+          </h2>
+          <p>
+            Lassen Sie uns gemeinsam Ihre Vision in die digitale Realität umsetzen.
+          </p>
+          <Link to="/contact" className="btn btn-primary">
+            Kostenlose Beratung
+          </Link>
+        </motion.div>
       </section>
     </div>
   );
